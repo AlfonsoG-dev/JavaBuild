@@ -73,6 +73,7 @@ public class FileOperation {
     public String getMainClass(String source) {
         BufferedReader br = null;
         String mainName = "";
+        String root = source.split("\\" + File.separator)[0];
         try {
             List<File> files = executor.executeConcurrentCallableList(fileUtils.listLimitNestedFilesFromPath(source, 2));
             outter:for(File f: files) {
@@ -80,7 +81,7 @@ public class FileOperation {
                     br = new BufferedReader(new FileReader(f));
                     while(br.ready()) {
                         if(br.readLine().contains("public static void main")) {
-                            mainName = f.getName().replace(".java", "");
+                            mainName = f.getPath().replace(root + File.separator, "").replace(".java", "").replace(File.separator, ".");
                             break outter;
                         }
                     }
