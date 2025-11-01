@@ -76,7 +76,10 @@ public class FileOperation {
         String root = source.split("\\" + File.separator)[0];
         if(!new File(source).exists()) return "";
         try {
-            List<File> files = executor.executeConcurrentCallableList(fileUtils.listLimitNestedFilesFromPath(source, 2));
+            List<File> files = fileUtils.listLimitNestedFiles(source, 2)
+            .stream()
+            .map(Path::toFile)
+            .toList();
             outter:for(File f: files) {
                 if(f.isFile() && !f.getName().equals("TestLauncher.java")) {
                     br = new BufferedReader(new FileReader(f));

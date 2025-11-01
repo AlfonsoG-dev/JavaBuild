@@ -109,7 +109,7 @@ public class FileUtils {
         }
         return result;
     }
-    private List<Path> listLimitNestedFiles(String filePath, int level) {
+    public List<Path> listLimitNestedFiles(String filePath, int level) {
         List<Path> result = new ArrayList<>();
         try {
             result = Files.walk(Paths.get(filePath), level, FileVisitOption.FOLLOW_LINKS)
