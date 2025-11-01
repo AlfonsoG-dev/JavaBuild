@@ -74,6 +74,7 @@ public class FileOperation {
         BufferedReader br = null;
         String mainName = "";
         String root = source.split("\\" + File.separator)[0];
+        if(!new File(source).exists()) return "";
         try {
             List<File> files = executor.executeConcurrentCallableList(fileUtils.listLimitNestedFilesFromPath(source, 2));
             outter:for(File f: files) {
@@ -109,17 +110,15 @@ public class FileOperation {
      * @param source where the .java files are
      * @return the project name
      */
-    public String getProjectName(String source) {
-        String name = getMainClass(source);
-        if(name.isEmpty()) {
-            try {
+    public String getProjectName() {
+        String name = "";
+        try {
             String
                 localParent = new File(localPath).getCanonicalPath(),
                 localName = new File(localParent).getName();
             name = localName;
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
+        } catch(IOException e) {
+            e.printStackTrace();
         }
         return name;
     }
@@ -188,7 +187,7 @@ public class FileOperation {
      */
     public void createMainClass(String source, String fileName) {
         String mainClassLines = "";
-        String main = getProjectName(source);
+        String main = getProjectName();
         mainClassLines = "class " + main + " {\n" +
             "    public static void main(String[] args) {\n" + 
             "        System.out.println(\"Hello from " + main + "\");" + "\n" +
@@ -208,7 +207,7 @@ public class FileOperation {
         // write build script lines
         scriptBuilder.writeBuildFile(
             fileName,
-            getProjectName(source),
+            getProjectName(),
             source,
             target,
             listSourceDirs(source)

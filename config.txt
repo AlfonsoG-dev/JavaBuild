@@ -1,7 +1,7 @@
 Root-Path: src
 Source-Path: src\Application
 Class-Path: bin
-Main-Class: Application.JavaBuild
+Main-Class: JavaBuild
 Test-Path: src\Test
 Test-Class: Test.TestLauncher
 Libraries: 

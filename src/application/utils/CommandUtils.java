@@ -105,10 +105,10 @@ public class CommandUtils {
     public String jarTypeUnion(String directory, String source, String target) throws IOException {
         StringBuffer build = new StringBuffer();
 
-        String jarFileName      = fileOperation.getProjectName(target) + ".jar";
+        String jarFileName      = fileOperation.getProjectName() + ".jar";
         String localParent   = new File(localPath).getCanonicalPath();
         String jarFormat     = jarTypeFormat(jarFileName);
-        String mainClassName = fileOperation.getProjectName(target);
+        String mainClassName = fileOperation.getMainClass(target);
 
         source = fileUtils.resolvePaths(localPath, source).getPath() + File.separator + " .";
 
