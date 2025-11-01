@@ -171,7 +171,10 @@ public class FileOperation {
             .map(e -> e + ";")
             .collect(Collectors.joining())
         );
-        scriptBuilder.writeManifesto(libJars.toString(), author, getMainClass(source), extract);
+        String cleanLibsJars = libJars.toString();
+        scriptBuilder.writeManifesto(
+            cleanLibsJars.substring(0, cleanLibsJars.length()-1), author, getMainClass(source), extract
+        );
     }
     /**
      * create the main class inside the source directory
