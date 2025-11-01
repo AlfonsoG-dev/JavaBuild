@@ -2,6 +2,6 @@ $srcClases = "src\Application\*.java src\Application\builders\*.java src\Applica
 $libFiles = ""
 $compile = "javac --release 23 -Werror -Xlint:all -d .\bin\ $srcClases"
 $createJar = "jar -cfm JavaBuild.jar Manifesto.txt -C .\bin\ ."
-$javaCommand = "java -jar JavaBuild.jar --config"
+$javaCommand = "java -jar JavaBuild.jar"
 $runCommand = "$compile" + " && " + "$createJar" + " && " +"$javaCommand"
 Invoke-Expression $runCommand 
