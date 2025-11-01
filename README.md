@@ -48,9 +48,11 @@
 - [x] Add `config` definition to set the `run`, `build`, flags like:
 >- `java -d bin App.java` or `java -cp bin App`
 >- `jar -cmf` or `jar -fe`
+- [x] test functions and make sure the latest changes regarding *test execution* didn't break anything.
 
 # TODO's
-- [ ] test functions and make sure the latest changes regarding *test execution* didn't break anything.
+- [ ] When including a lib file, the project didn't read the lib path of Manifesto `Class-Path: lib\directory\app.jar`, this line allow the build tool to ignore the dependency and build the project using the Manifesto class path. Now it appears to be broken.
+- [ ] when using config file, changing any value will modify subsequently manifesto file.
 - [ ] when creating a command use ";" on **windows**, ":" for other operating systems
 - [ ] when creating the config/manifesto those file should have almost the same syntax.
 - [ ] add to the *--add* CLI command the aggregation of modules like the ones of *JavaFX* `issue #6`
@@ -58,7 +60,6 @@
 - [ ] when *powershell* isn't installed use the default **cmd** option.
 - [ ] add a mode to allow the user the `--watch` option, this option will serve as the live reload option of the compile process.
 > Use `WatchService` to create a mode to compile at the same time that you change or modify the `.java` files
-- [ ] when using config file, changing any value will modify subsequently manifesto file.
  
 ------
 
