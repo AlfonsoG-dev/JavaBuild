@@ -49,7 +49,8 @@ public class CommandUtils {
             relative = filePath.toString().replace(sourceParent, "");
             classFilePath = target.toString() + relative.replace(".java", ".class");
         } else {
-            relative = source.relativize(filePath).toString();
+            String root = "." + File.separator + source.toString().split("\\" + File.separator, 2)[0] + File.separator;
+            relative = filePath.toString().replace(root, "");
             classFilePath = target.resolve(relative.replace(".java", ".class")).toString();
         } 
 
