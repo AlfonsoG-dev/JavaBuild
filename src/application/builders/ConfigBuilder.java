@@ -100,7 +100,7 @@ public class ConfigBuilder {
     public void writeConfigFile(String root, String source, String target, String mainClassName) {
         File f = fUtils.resolvePaths(localPath, "config.txt");
         try (FileWriter w = new FileWriter(f)) {
-            String mainClass =  mainClassName == null ? fOperation.getProjectName() : mainClassName;
+            String mainClass =  mainClassName == null ? fOperation.getMainClass(source) : mainClassName;
             String testPath = existTest(root) ? root + File.separator + "Test" : " ";
             String testClass = fOperation.getTestClass(testPath, root);
             String[][] headers = {
