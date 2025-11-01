@@ -122,13 +122,13 @@ public class FileOperation {
         }
         return name;
     }
-    public String getTestClass(String source) {
+    public String getTestClass(String source, String root) {
         String l = "";
         File f = new File(source);
         if(f.listFiles() != null) {
             for(File mf: f.listFiles()) {
                 if(mf.isFile() && mf.getName().equals("TestLauncher.java")) {
-                    l = mf.getName().replace(".java", "");
+                    l = mf.getPath().replace(root + File.separator, "").replace(".java", "").replace(File.separator, ".");
                     break;
                 }
             }
