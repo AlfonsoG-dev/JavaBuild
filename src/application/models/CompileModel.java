@@ -1,10 +1,10 @@
-package models;
+package Application.models;
+
+import Application.utils.CommandUtils;
+import Application.utils.ModelUtils;
 
 import java.io.File;
 import java.util.Optional;
-
-import utils.CommandUtils;
-import utils.ModelUtils;
 
 public class CompileModel {
 

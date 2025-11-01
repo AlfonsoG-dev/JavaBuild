@@ -1,12 +1,12 @@
-package builders;
+package Application.builders;
 
-import operations.FileOperation;
-import utils.FileUtils;
+import Application.utils.FileUtils;
+import Application.operations.FileOperation;
 
 import java.io.File;
+import java.util.HashMap;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 
 public class ConfigBuilder {
 

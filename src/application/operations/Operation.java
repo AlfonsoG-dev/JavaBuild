@@ -1,4 +1,11 @@
-package operations;
+package Application.operations;
+
+import Application.utils.FileUtils;
+import Application.utils.ModelUtils;
+import Application.utils.CommandUtils;
+import Application.utils.OperationUtils;
+import Application.builders.ConfigBuilder;
+import Application.builders.CommandBuilder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,15 +15,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.List;
 import java.util.HashMap;
-
-
-import utils.OperationUtils;
-import utils.CommandUtils;
-import utils.ModelUtils;
-
-import utils.FileUtils;
-import builders.CommandBuilder;
-import builders.ConfigBuilder;
 
 /**
  * Its the perform class of the java command

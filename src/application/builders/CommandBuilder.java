@@ -1,16 +1,16 @@
-package builders;
+package Application.builders;
+
+import Application.utils.FileUtils;
+import Application.utils.CommandUtils;
+import Application.models.CompileModel;
+import Application.operations.ExecutorOperation;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import models.CompileModel;
-import operations.ExecutorOperation;
-
 import java.io.File;
 import java.io.IOException;
 
-import utils.CommandUtils;
-import utils.FileUtils;
 public class CommandBuilder {
 
     private String localPath;

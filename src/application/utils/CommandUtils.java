@@ -1,10 +1,11 @@
-package utils;
+package Application.utils;
+
+import Application.operations.FileOperation;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import operations.FileOperation;
 
 public class CommandUtils {
 
