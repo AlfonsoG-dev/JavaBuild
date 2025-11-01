@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.Path;
@@ -53,14 +52,10 @@ public class FileOperation {
         List<String> names = new ArrayList<>();
         File lf = fileUtils.resolvePaths(localPath, "lib");
         if(lf.listFiles() != null) {
-            try {
-                names = Files.walk(lf.toPath(), 2, FileVisitOption.FOLLOW_LINKS)
-                .filter(Files::isRegularFile)
-                .map(Path::toString)
-                .toList();
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
+            names = fileUtils.listLimitNestedFiles(lf.getPath(), 2)
+            .stream()
+            .map(Path::toString)
+            .toList();
         }
         return names;
     }
