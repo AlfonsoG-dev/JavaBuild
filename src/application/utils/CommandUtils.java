@@ -1,9 +1,9 @@
-package Application.utils;
-
-import Application.operations.FileOperation;
+package application.utils;
 
 import java.io.File;
 import java.nio.file.Path;
+
+import application.operations.FileOperation;
 
 
 public class CommandUtils {

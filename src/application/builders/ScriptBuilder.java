@@ -1,11 +1,11 @@
-package Application.builders;
-
-import Application.utils.FileUtils;
+package application.builders;
 
 import java.io.File;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import application.utils.FileUtils;
 
 public class ScriptBuilder {
 

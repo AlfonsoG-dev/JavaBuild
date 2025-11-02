@@ -1,12 +1,12 @@
-package Application.builders;
-
-import Application.utils.FileUtils;
-import Application.utils.CommandUtils;
-import Application.models.CompileModel;
-import Application.operations.ExecutorOperation;
+package application.builders;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import application.models.CompileModel;
+import application.operations.ExecutorOperation;
+import application.utils.CommandUtils;
+import application.utils.FileUtils;
 
 import java.io.File;
 

@@ -1,7 +1,4 @@
-package Application.operations;
-
-import Application.utils.FileUtils;
-import Application.builders.ScriptBuilder;
+package application.operations;
 
 import java.io.File;
 import java.io.BufferedReader;
@@ -15,6 +12,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import application.builders.ScriptBuilder;
+import application.utils.FileUtils;
 
 public class FileOperation {
 

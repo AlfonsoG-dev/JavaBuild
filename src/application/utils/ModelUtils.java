@@ -1,12 +1,12 @@
-package Application.utils;
-
-import Application.operations.ExecutorOperation;
-import Application.operations.FileOperation;
+package application.utils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import application.operations.ExecutorOperation;
+import application.operations.FileOperation;
 
 import java.io.File;
 

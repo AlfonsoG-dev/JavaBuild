@@ -1,10 +1,11 @@
-package Application.builders;
-
-import Application.utils.FileUtils;
-import Application.operations.FileOperation;
+package application.builders;
 
 import java.io.File;
 import java.util.HashMap;
+
+import application.operations.FileOperation;
+import application.utils.FileUtils;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -47,8 +48,8 @@ public class ConfigBuilder {
                 {"Source-Path", "src"},
                 {"Class-Path", "bin"},
                 {"Main-Class", mainClass},
-                {"Test-Path", "src" + File.separator + "Test"},
-                {"Test-Class", "Test.TestLauncher"},
+                {"Test-Path", "src" + File.separator + "test"},
+                {"Test-Class", "test.TestLauncher"},
                 {"Libraries", ""},
                 {"Compile-Flags", "-Werror -Xlint:all -Xdiags:verbose"}
             };
@@ -103,7 +104,7 @@ public class ConfigBuilder {
         File f = fUtils.resolvePaths(localPath, "config.txt");
         try (FileWriter w = new FileWriter(f)) {
             String mainClass =  mainClassName == null ? fOperation.getMainClass(source) : mainClassName;
-            String testPath = existsTest(root) ? root + File.separator + "Test" : " ";
+            String testPath = existsTest(root) ? root + File.separator + "test" : " ";
             String testClass = fOperation.getTestClass(testPath, root);
             String[][] headers = {
                 {"Root-Path: ", root},

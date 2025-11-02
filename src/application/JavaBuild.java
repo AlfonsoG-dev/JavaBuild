@@ -1,8 +1,8 @@
-package Application;
-
-import Application.operations.Operation;
+package application;
 
 import java.io.File;
+
+import application.operations.Operation;
 
 class JavaBuild {
     public static void main(String[] args) {

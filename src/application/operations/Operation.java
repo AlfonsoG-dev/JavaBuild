@@ -1,11 +1,4 @@
-package Application.operations;
-
-import Application.utils.FileUtils;
-import Application.utils.ModelUtils;
-import Application.utils.CommandUtils;
-import Application.utils.OperationUtils;
-import Application.builders.ConfigBuilder;
-import Application.builders.CommandBuilder;
+package application.operations;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +6,14 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.Optional;
+
+import application.builders.CommandBuilder;
+import application.builders.ConfigBuilder;
+import application.utils.CommandUtils;
+import application.utils.FileUtils;
+import application.utils.ModelUtils;
+import application.utils.OperationUtils;
+
 import java.util.List;
 import java.util.HashMap;
 

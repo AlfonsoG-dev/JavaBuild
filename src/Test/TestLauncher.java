@@ -1,4 +1,4 @@
-package Test;
+package test;
 public class TestLauncher {
 
     public static void main(String[] args) {

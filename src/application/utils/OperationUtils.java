@@ -1,6 +1,4 @@
-package Application.utils;
-
-import Application.operations.FileOperation;
+package application.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +8,8 @@ import java.io.InputStreamReader;
 import java.lang.Process;
 
 import java.util.List;
+
+import application.operations.FileOperation;
 
 public class OperationUtils {
     private FileOperation fileOperation;
