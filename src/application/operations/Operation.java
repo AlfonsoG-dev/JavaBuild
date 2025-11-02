@@ -226,20 +226,15 @@ public class Operation {
      * Performs create jar operation using the command.
      * @param extract boolean value that indicates if you add or not to the build the lib file.
      * @param source the folder to include in the build.
-     * @throws Exception when creating a jar file gets an error.
      */
     public void createJarOperation(boolean extract, String source, String target) {
-        try {
-            String command = cBuilder.getJarFileCommand(
-                extract,
-                Optional.ofNullable(source).orElse(oClassPath),
-                Optional.ofNullable(target).orElse(oSourcePath)
-            );
-            System.out.println("[Info] creating jar file ...");
-            operationUtils.executeCommand(command);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        String command = cBuilder.getJarFileCommand(
+            extract,
+            Optional.ofNullable(source).orElse(oClassPath),
+            Optional.ofNullable(target).orElse(oSourcePath)
+        );
+        System.out.println("[Info] creating jar file ...");
+        operationUtils.executeCommand(command);
     }
     /**
      * Helper function that allow to identified if you include or not in the build the lib dependency.

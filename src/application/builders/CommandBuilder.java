@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import java.io.File;
-import java.io.IOException;
 
 public class CommandBuilder {
 
@@ -68,7 +67,7 @@ public class CommandBuilder {
      * @param source where the lib files are.
      * @return the jar command for the build process.
      */
-    public String getJarFileCommand(boolean includeExtraction, String source, String target) throws IOException {
+    public String getJarFileCommand(boolean includeExtraction, String source, String target) {
         String
             command = "",
             directory = "";
@@ -80,11 +79,10 @@ public class CommandBuilder {
                 directory += " -C " + extractionDir.getPath() + File.separator + " .";
             }
         } 
-        if(includeExtraction) {
-            command = commandUtils.jarTypeUnion(directory, source, target);
-        } else {
-            command = commandUtils.jarTypeUnion("", source, target);
+        if(!includeExtraction) {
+            directory = "";
         }
+        command = commandUtils.jarTypeUnion(directory, source, target);
         return command;
     }
     /**

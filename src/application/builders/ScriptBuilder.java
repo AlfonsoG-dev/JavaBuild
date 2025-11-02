@@ -3,7 +3,6 @@ package Application.builders;
 import Application.utils.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -141,7 +140,6 @@ public class ScriptBuilder {
      * @param fileName: path where the build script is created
      * @param mainClass: main class name
      * @param extract: true if you want to include the lib files as part of the jar file, false otherwise
-     * @throws IOException: exception while trying to create the build script
      */
     public void writeBuildFile(String fileName, String mainClass, String source, String target, List<String> dirNames,
     List<String> libNames, boolean extract) {
@@ -175,23 +173,16 @@ public class ScriptBuilder {
         } else {
             runCommand = getBuildScriptCommand();
         }
-        try {
-            String lines = getScriptLines(
-                sourceFiles.toString(),
-                libFiles.toString(),
-                compile,
-                cBuilder.getJarFileCommand(extract, target, source),
-                runJar,
-                runCommand
-            );
+        String lines = getScriptLines(
+            sourceFiles.toString(), libFiles.toString(), compile,
+            cBuilder.getJarFileCommand(extract, target, source),
+            runJar, runCommand
+        );
 
-            File buildFile = fileUtils.resolvePaths(localPath, fileName);
-            fileUtils.writeToFile(lines, buildFile.getPath());
-            if(fileName.contains(".sh") && buildFile.setExecutable(true)) {
-                System.out.println("[Info] change file to executable " + buildFile.getPath());
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
+        File buildFile = fileUtils.resolvePaths(localPath, fileName);
+        fileUtils.writeToFile(lines, buildFile.getPath());
+        if(fileName.contains(".sh") && buildFile.setExecutable(true)) {
+            System.out.println("[Info] change file to executable " + buildFile.getPath());
         }
     }
 }

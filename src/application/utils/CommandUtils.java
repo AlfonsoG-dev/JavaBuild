@@ -3,7 +3,6 @@ package Application.utils;
 import Application.operations.FileOperation;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 
@@ -94,11 +93,11 @@ public class CommandUtils {
      * @param source: directory where .class files are
      * @param target: directory where .java files are, this will serve to find the mainClass
      */
-    public String jarTypeUnion(String directory, String source, String target) throws IOException {
+    public String jarTypeUnion(String directory, String source, String target) {
         StringBuffer build = new StringBuffer();
 
         String jarFileName      = fileOperation.getProjectName() + ".jar";
-        String localParent   = new File(localPath).getCanonicalPath();
+        String localParent   = fileOperation.getProjectName();
         String jarFormat     = jarTypeFormat(jarFileName);
         String mainClassName = fileOperation.getMainClass(target);
 
@@ -120,7 +119,7 @@ public class CommandUtils {
                 }
                 break;
             case "jar -cf ":
-                String jarName = new File(localParent).getName() + ".jar";
+                String jarName = localParent + ".jar";
                 if(!directory.isEmpty()) {
                     build.append(jarName);
                     build.append(" -C ");
