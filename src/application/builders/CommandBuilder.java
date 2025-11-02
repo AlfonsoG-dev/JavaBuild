@@ -68,22 +68,16 @@ public class CommandBuilder {
      * @return the jar command for the build process.
      */
     public String getJarFileCommand(boolean includeExtraction, String source, String target) {
-        String
-            command = "",
-            directory = "";
-
-        File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
-
-        if(extractionFile.listFiles() != null) {
-            for(File extractionDir: extractionFile.listFiles()) {
-                directory += " -C " + extractionDir.getPath() + File.separator + " .";
-            }
-        } 
+        String directory = "";
+        
         if(!includeExtraction) {
-            directory = "";
+            return commandUtils.jarTypeUnion(directory, source, target);
+        } 
+        File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
+        for(File extractionDir: extractionFile.listFiles()) {
+            directory += " -C " + extractionDir.getPath() + File.separator + " .";
         }
-        command = commandUtils.jarTypeUnion(directory, source, target);
-        return command;
+        return commandUtils.jarTypeUnion(directory, source, target);
     }
     /**
      * creates the run command or the execute command.
