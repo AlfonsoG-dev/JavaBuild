@@ -19,9 +19,6 @@ public class CompileModel {
 
     public CompileModel(String sourcePath, String classPath, String flags) {
         this.classPath = classPath;
-        if(flags.isEmpty()) {
-            this.flags = "-Werror -Xlint:all -Xdiags:verbose";
-        }
         this.flags = flags;
         cUtils = new CommandUtils(LOCAL_PATH);
         mUtils = new ModelUtils(sourcePath, classPath, LOCAL_PATH);
@@ -54,9 +51,8 @@ public class CompileModel {
         if(oSource.isEmpty()) {
             System.out.println("[Info] No modified files to compile");
             return null;
-        } else {
-            srcClases = oSource.get();
         }
+        srcClases = oSource.get();
 
         if(!srcClases.contains("*.java")) {
             compile = new StringBuffer();
@@ -87,8 +83,6 @@ public class CompileModel {
         compile.append(srcClases);
         return compile.toString();
     }
-
-
 
     // ----------------------------\\
     //   Verify non-null values    \\
