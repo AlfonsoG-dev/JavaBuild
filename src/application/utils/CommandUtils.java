@@ -40,19 +40,10 @@ public class CommandUtils {
      * @return true if the file should be re-compile, false otherwise
      */
     public boolean recompileFiles(Path filePath, Path source, Path target) {
-        String relative = "";
-        String classFilePath = "";
         source = source.normalize();
-        if(source.getNameCount() > 2) {
-            // only when the source folder structure is: `src\name\name\name\App.java`
-            String sourceParent = parentFromNesting(source).toString();
-            relative = filePath.toString().replace(sourceParent, "");
-            classFilePath = target.toString() + relative.replace(".java", ".class");
-        } else {
-            String root = "." + File.separator + source.toString().split("\\" + File.separator, 2)[0] + File.separator;
-            relative = filePath.toString().replace(root, "");
-            classFilePath = target.resolve(relative.replace(".java", ".class")).toString();
-        } 
+        String root = "." + File.separator + source.toString().split("\\" + File.separator, 2)[0] + File.separator;
+        String relative = filePath.toString().replace(root, "");
+        String classFilePath = target.resolve(relative.replace(".java", ".class")).toString();
 
         File javaFile = filePath.toFile();
         File classFile = new File(classFilePath);
