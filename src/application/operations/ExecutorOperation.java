@@ -20,10 +20,11 @@ public class ExecutorOperation {
     public <T> T executeConcurrentCallableList(Callable<T> task) {
         T result = null;
         ExecutorService executor = Executors.newCachedThreadPool();
-        System.out.println("[Info] Starting computation of task");
         try {
             Future<T> future = executor.submit(task);
-            System.out.println("[Info] Waiting to get the results...");
+            if(future.state() == Future.State.RUNNING) {
+                System.out.println("[Info] Waiting to get the results...");
+            }
             result = future.get();
         } catch (CancellationException cancelException) {
             System.err.println("[Error] Future was canceled: " + cancelException.getMessage());
