@@ -98,9 +98,6 @@ public class FileOperation {
                 br = null;
             }
         }
-        if(mainName.contains(File.separator)) {
-            mainName.replace(File.separator, "");
-        }
         return mainName;
     }
     /**
@@ -111,9 +108,7 @@ public class FileOperation {
     public String getProjectName() {
         String name = "";
         try {
-            String
-                localParent = new File(localPath).getCanonicalPath(),
-                localName = new File(localParent).getName();
+            String localParent = new File(localPath).getCanonicalPath(), localName = new File(localParent).getName();
             name = localName;
         } catch(IOException e) {
             e.printStackTrace();
@@ -142,13 +137,18 @@ public class FileOperation {
     }
     public void createIgnoreFile(String fileName) {
         String ignoreFiles = "";
-        ignoreFiles = "**bin" + "\n" +
-            "**lib" + "\n" +
-            "**extractionFiles" + "\n" +
-            "**Manifesto.txt" + "\n" +
-            "**Session.vim" + "\n" +
-            "**.jar" + "\n" +
-            "**.exe";
+        String[] files = {
+            "**bin",
+            "**lib",
+            "**extractionFiles",
+            "**Manifesto.txt",
+            "**Session.vim",
+            "**.jar",
+            "**.exe"
+        };
+        for(String f: files) {
+            ignoreFiles += f + "\n";
+        }
         fileUtils.writeToFile(ignoreFiles, fileName);
     }
     /**
@@ -159,7 +159,7 @@ public class FileOperation {
      */
     public void createManifesto(String source, String author, boolean extract) {
         StringBuffer libJars = new StringBuffer();
-        if(listLibFiles().size() > 0) {
+        if(extract == false) {
             List<String> jars = listLibFiles()
                 .stream()
                 .filter(p -> p.contains(".jar"))
@@ -188,7 +188,7 @@ public class FileOperation {
         String main = getProjectName();
         mainClassLines = "class " + main + " {\n" +
             "    public static void main(String[] args) {\n" + 
-            "        System.out.println(\"Hello from " + main + "\");" + "\n" +
+            "        System.out.println(\"Hellow from " + main + "\");" + "\n" +
             "    }\n" + 
             "}";
         String targetSource = fileUtils.resolvePaths(localPath, source).getPath();
@@ -229,13 +229,14 @@ public class FileOperation {
         boolean containsPath = false;
         File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
         File myFile = new File(libJarPath);
-        if(myFile.getParent() != null && extractionFile.listFiles() != null) {
-            String jarLibParent = myFile.getParent();
+        String jarLibParent = myFile.getParent();
+        if(jarLibParent != null && extractionFile.listFiles() != null) {
             String jarNameParent = new File(jarLibParent).getName();
             for(File f: extractionFile.listFiles()) {
                 String extractionDirName = new File(f.getPath()).getName();
                 if(extractionDirName.equals(jarNameParent)) {
                     containsPath = true;
+                    break;
                 }
             }
         }
