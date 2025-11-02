@@ -82,17 +82,15 @@ public class ConfigBuilder {
      * If the source path doesn't contain Test folder in the first nest level return false.
      */
     private boolean existsTest(String source) {
-        boolean e = false;
         File f = new File(source);
         if(f.listFiles() != null && f.listFiles().length > 0) {
             for(File mf: f.listFiles()) {
-                if(mf.isDirectory() && mf.getName().equals("Test")) {
-                    e = true;
-                    break;
+                if(mf.isDirectory() && mf.getName().equals("test")) {
+                    return true;
                 }
             }
         }
-        return e;
+        return false;
     }
     /**
      * create the config
