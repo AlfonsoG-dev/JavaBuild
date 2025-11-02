@@ -40,23 +40,25 @@ public class ConfigBuilder {
         File configFile = fUtils.resolvePaths(localPath, "config.txt"); 
 
         if(!configFile.exists()) {
+            // default config values not written
             String mainClass = fOperation.getMainClass("src");
             String[][] headers = {
                 {"Root-Path", "src"},
-                {"Source-Path: ", "src"},
-                {"Class-Path: ", "bin"},
-                {"Main-Class: ", mainClass},
-                {"Test-Path: ", "src" + File.separator + "Test"},
-                {"Test-Class: ", "Test.TestLauncher"},
-                {"Libraries: ", ""},
-                {"Compile-Flags: ", "-Werror -Xlint:all -Xdiags:verbose"}
+                {"Source-Path", "src"},
+                {"Class-Path", "bin"},
+                {"Main-Class", mainClass},
+                {"Test-Path", "src" + File.separator + "Test"},
+                {"Test-Class", "Test.TestLauncher"},
+                {"Libraries", ""},
+                {"Compile-Flags", "-Werror -Xlint:all -Xdiags:verbose"}
             };
             for(int i=0; i<headers.length; ++i) {
                 for(int j=0; j<headers[i].length; ++j) {
-                    config.put(headers[i][0].trim().replace(":", ""), headers[i][j]);
+                    config.put(headers[i][0], headers[i][j]);
                 }
             }
         } else {
+            // read config values from file
             String[] lines = fUtils.readFileLines(configFile.getPath()).split("\n");
             for(String l : lines) {
                 String[] nameValue = l.split(":", 2);
@@ -78,7 +80,7 @@ public class ConfigBuilder {
     /**
      * If the source path doesn't contain Test folder in the first nest level return false.
      */
-    private boolean existTest(String source) {
+    private boolean existsTest(String source) {
         boolean e = false;
         File f = new File(source);
         if(f.listFiles() != null && f.listFiles().length > 0) {
@@ -101,7 +103,7 @@ public class ConfigBuilder {
         File f = fUtils.resolvePaths(localPath, "config.txt");
         try (FileWriter w = new FileWriter(f)) {
             String mainClass =  mainClassName == null ? fOperation.getMainClass(source) : mainClassName;
-            String testPath = existTest(root) ? root + File.separator + "Test" : " ";
+            String testPath = existsTest(root) ? root + File.separator + "Test" : " ";
             String testClass = fOperation.getTestClass(testPath, root);
             String[][] headers = {
                 {"Root-Path: ", root},
