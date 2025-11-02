@@ -137,11 +137,12 @@ public class Operation {
      */
     public void createFilesOperation(String author, String source, String target) {
         Optional<String> oAuthor = Optional.ofNullable(author);
+        String authorName = getAuthorName();
         oAuthor.ifPresentOrElse(
                 value -> System.out.println("[Info] Using Author name " + value),
-                () -> System.out.println("[Info] No author provided, now using " + getAuthorName())
+                () -> System.out.println("[Info] No author provided, now using " + authorName)
         );
-        operationUtils.createProjectFiles(oAuthor.orElse(getAuthorName()), oSourcePath, oClassPath);
+        operationUtils.createProjectFiles(oAuthor.orElse(authorName), oSourcePath, oClassPath);
     }
     /**
      * used to list the .java or .jar or .class files in the project.
@@ -172,7 +173,6 @@ public class Operation {
      * @throws Exception when the compile command gets an error.
      */
     public void compileProjectOperation(String source, String target, String release) {
-        String javaVersion = System.getProperty("java.specification.version");
 
         String compileCommand = cBuilder.getCompileCommand(
             Optional.ofNullable(source).orElse(oSourcePath),
@@ -242,7 +242,6 @@ public class Operation {
      * @throws IOException
      */
     public boolean haveIncludeExtraction() {
-        boolean haveInclude = true; 
         File f = fileUtils.resolvePaths(localPath, "Manifesto.txt");
         if(!f.exists()) {
             System.err.println("[Error] Manifesto doesn't exists");
@@ -251,11 +250,10 @@ public class Operation {
         String[] lines = fileUtils.readFileLines(f.getPath()).split("\n");
         for(String l: lines) {
             if(l.contains("Class-Path:")) {
-                haveInclude = false;
-                break;
+                return false;
             }
         }
-        return haveInclude;
+        return true;
     }
     /**
      * Helper function that writes in the manifesto the lib .jar dependencies.
@@ -279,6 +277,7 @@ public class Operation {
             if(operationUtils.addJarDependency(filePath)) {
                 System.out.println("[Info] jar dependency has been added to lib folder");
                 if(extract == false) {
+                    // add it to the manifesto to indicate if you extract its content or not.
                     fileOperation.createManifesto(
                         oSourcePath, Optional.ofNullable(author).orElse(getAuthorName()), extract
                     );
