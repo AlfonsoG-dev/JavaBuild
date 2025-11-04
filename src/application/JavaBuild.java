@@ -8,7 +8,7 @@ class JavaBuild {
     public static void main(String[] args) {
         try {
             Operation op = new Operation("." + File.separator);
-            op.startUpCompileModel();
+            op.initializeENV();
             boolean haveExtractions = op.haveIncludeExtraction();
             outter: for(int i=0; i<args.length; ++i) {
                 String root = getCliValues(args, i, "--root");
