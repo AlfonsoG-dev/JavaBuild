@@ -21,7 +21,8 @@ import java.util.HashMap;
  * Its the perform class of the java command
  */
 public class Operation {
-    private final String javaVersion = System.getProperty("java.specification.version");
+    private final String JAVA_VERSION = System.getProperty("java.specification.version");
+
     private String localPath;
     private OperationUtils operationUtils;
     private FileUtils fileUtils;
@@ -52,7 +53,7 @@ public class Operation {
     private HashMap<String, String> getConfigData() {
         return configBuilder.getConfigValues();
     }
-    public void startUpCompileModel() {
+    public void initializeENV() {
         oRootPath = Optional.ofNullable(getConfigData().get("Root-Path")).orElse("src");
         oSourcePath = Optional.ofNullable(getConfigData().get("Source-Path")).orElse("src");
         oClassPath = Optional.ofNullable(getConfigData().get("Class-Path")).orElse("bin");
@@ -179,7 +180,7 @@ public class Operation {
             Optional.ofNullable(source).orElse(oSourcePath),
             Optional.ofNullable(target).orElse(oClassPath),
             oCommandFlags,
-            Integer.parseInt(Optional.ofNullable(release).orElse(javaVersion))
+            Integer.parseInt(Optional.ofNullable(release).orElse(JAVA_VERSION))
         );
         System.out.println("[Info] compile ...");
         operationUtils.executeCommand(compileCommand);
@@ -324,7 +325,7 @@ public class Operation {
             Optional.ofNullable(source).orElse(getConfigData().get("Test-Path")),
             Optional.ofNullable(target).orElse(oClassPath),
             oCommandFlags,
-            Integer.parseInt(Optional.ofNullable(release).orElse(javaVersion))
+            Integer.parseInt(Optional.ofNullable(release).orElse(JAVA_VERSION))
         );
         System.out.println("[Info] Compiling test");
         operationUtils.executeCommand(command);
