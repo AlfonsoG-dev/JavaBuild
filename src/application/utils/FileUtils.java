@@ -36,6 +36,12 @@ public class FileUtils {
     public boolean fileExists(String filePath) {
         return new File(filePath).exists();
     }
+    public boolean createDir(String dirURL) {
+        File f = new File(dirURL);
+        if(f.exists()) return true;
+        if(f.toPath().getNameCount() > 2) return f.mkdirs();
+        return f.mkdir();
+    }
     /**
      * helper function to write lines to a file, if the file doesn't exists it will be created
      * @param lines the lines to write
