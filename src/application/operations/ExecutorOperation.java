@@ -2,11 +2,10 @@ package application.operations;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.RejectedExecutionException;
 
 public class ExecutorOperation {
     
@@ -18,27 +17,17 @@ public class ExecutorOperation {
      * @return the result of the execution of the generic type T
      */
     public <T> T executeConcurrentCallableList(Callable<T> task) {
-        T result = null;
-        ExecutorService executor = Executors.newCachedThreadPool();
-        try {
-            Future<T> future = executor.submit(task);
-            if(future.state() == Future.State.RUNNING) {
-                System.out.println("[Info] Waiting to get the results...");
+        T value = null;
+        try (ExecutorService ex = Executors.newCachedThreadPool()) {
+            Future<T> result = ex.submit(task);
+            if(result.state() == Future.State.RUNNING) {
+                System.out.println("[Info] Waiting for data...");
             }
-            result = future.get();
-        } catch (CancellationException cancelException) {
-            System.err.println("[Error] Future was canceled: " + cancelException.getMessage());
-        } catch (RejectedExecutionException executionException) {
-            System.err.println("[Error] Task execution rejected: " + executionException.getMessage());
-        } catch (InterruptedException interruptedException) {
-            Thread.currentThread().interrupt();
-            System.err.println("[Error] Execution interrupted: " + interruptedException.getMessage());
-        } catch (ExecutionException executionException) {
-            System.err.println("[Error] Execution failed: " + executionException.getCause());
-        } finally {
-            executor.shutdown();
+            value = result.get();
+        } catch (ExecutionException | InterruptedException | CancellationException e) {
+            e.printStackTrace();
         }
-        return result;
+        return value;
     }
 
 }
