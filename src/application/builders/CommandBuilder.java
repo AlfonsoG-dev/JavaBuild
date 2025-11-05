@@ -71,14 +71,14 @@ public class CommandBuilder {
         String directory = "";
         
         if(!includeExtraction) {
-            return commandUtils.jarTypeUnion(directory, source, target);
+            return commandUtils.jarTypeUnion(directory, source, target, includeExtraction);
         } 
         File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
         fileUtils.createDir(extractionFile.getPath());
         for(File extractionDir: extractionFile.listFiles()) {
             directory += " -C " + extractionDir.getPath() + File.separator + " .";
         }
-        return commandUtils.jarTypeUnion(directory, source, target);
+        return commandUtils.jarTypeUnion(directory, source, target, includeExtraction);
     }
     /**
      * creates the run command or the execute command.
