@@ -288,7 +288,7 @@ This project use [javaBuild_tool](https://github.com/AlfonsoG-dev/javaBuild) to 
 - If you want to use the *CLI* tool you have to create an `.exe` file and place it in system path
 - For **LINUX**
 ```bash
-$ echo '#!/usr/bin/java -jar' > myBin
+$ echo '#!javaPath -jar' > myBin
 $ cat my.jar >> myBin
 $ chmod +x myBin
 $ ./myBin
