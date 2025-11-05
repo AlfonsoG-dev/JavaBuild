@@ -57,7 +57,7 @@ public class Operation {
         oRootPath = Optional.ofNullable(getConfigData().get("Root-Path")).orElse("src");
         oSourcePath = Optional.ofNullable(getConfigData().get("Source-Path")).orElse("src");
         oClassPath = Optional.ofNullable(getConfigData().get("Class-Path")).orElse("bin");
-        oCommandFlags = Optional.ofNullable(getConfigData().get("Compile-Flags")).orElse("-Werror");
+        oCommandFlags = Optional.ofNullable(getConfigData().get("Compile-Flags")).orElse("-Xlint:all -Xdiags:verbose");
 
         modelUtils = new ModelUtils(
             oSourcePath,
@@ -94,22 +94,14 @@ public class Operation {
      * @throws IOException
      */
     public String getAuthorName() {
-        String author = null;
-        File f = fileUtils.resolvePaths(localPath, "Manifesto.txt");
-        if(f.exists()) {
-            try (BufferedReader myReader = new BufferedReader(new FileReader(f))){
-                while(myReader.ready()) {
-                    String lines = myReader.readLine();
-                    if(lines.contains("Created-By:")) {
-                        author = lines.trim().split(":")[1];
-                        break;
-                    }
-                }
-            } catch(IOException e) {
-                e.printStackTrace();
+        String[] lines = fileUtils.readFileLines("Manifesto.txt").split("\n");
+        for(String l: lines) {
+            String k = l.split(":", 2)[0].trim();
+            if(k.equals("Created-By")) {
+                return l.split(":", 2)[1].trim();
             }
         }
-        return Optional.ofNullable(author).orElse("System-Owner");
+        return "System-Owner";
     }
 
     /**
@@ -155,7 +147,7 @@ public class Operation {
         Optional<String> oSource = Optional.ofNullable(source);
         File read = fileUtils.resolvePaths(localPath, oSource.orElse(oSourcePath));
         if(read.isFile()) {
-            System.out.println("[Info] Only directory types are allow but here you have it°!");
+            System.out.println("[Warning] Only directories are allowed°!");
             System.out.println(read.getPath());
         }
         if(read.isDirectory()) {
