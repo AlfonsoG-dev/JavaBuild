@@ -74,6 +74,7 @@ public class CommandBuilder {
             return commandUtils.jarTypeUnion(directory, source, target);
         } 
         File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
+        fileUtils.createDir(extractionFile.getPath());
         for(File extractionDir: extractionFile.listFiles()) {
             directory += " -C " + extractionDir.getPath() + File.separator + " .";
         }
