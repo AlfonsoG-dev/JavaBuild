@@ -9,6 +9,8 @@ import application.utils.FileUtils;
 
 public class ScriptBuilder {
 
+    private final static String OS_NAME = System.getProperty("os.name").toLowerCase();
+
     private String localPath;
     private FileUtils fileUtils;
 
@@ -23,7 +25,7 @@ public class ScriptBuilder {
      */
     private String getRunScriptCommand() {
         String command = "";
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+        if(OS_NAME.contains("windows")) {
             command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" " +
                 "+ \" && \" +" + "\"$javaCommand\"" + "\n";
         }
@@ -36,9 +38,9 @@ public class ScriptBuilder {
      */
     private String getJavaScriptCommand(String mainClass) {
         String command = "";
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+        if(OS_NAME.contains("windows")) {
             command = "$javaCommand = \"java -jar " + mainClass + ".jar\""  + "\n";
-        } else if(System.getProperty("os.name").toLowerCase().contains("linux")) {
+        } else if(OS_NAME.contains("linux")) {
             command = "java -jar " + mainClass + ".jar\n";
         }
         return command;
@@ -49,7 +51,7 @@ public class ScriptBuilder {
      */
     private String getBuildScriptCommand() {
         String command = "";
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+        if(OS_NAME.contains("windows")) {
             command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" \n";
         }
         return command;
@@ -84,13 +86,13 @@ public class ScriptBuilder {
     public String getScriptLines(String srcClases, String libFiles, String compile, String extractJar, String runJar, String runCommand) {
         
         StringBuffer sb = new StringBuffer();
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
-            sb.append( "$srcClases = \"" + srcClases + "\"\n");
+        if(OS_NAME.contains("windows")) {
+            sb.append("$srcClases = \"" + srcClases + "\"\n");
             sb.append("$libFiles = \"" + libFiles + "\"\n");
             sb.append("$compile = \"" + compile + "\"\n");
             sb.append("$createJar = " + "\"" + extractJar + "\"" + "\n");
             sb.append(runJar + runCommand + "Invoke-Expression $runCommand \n");
-        } else if(System.getProperty("os.name").toLowerCase().contains("linux")) {
+        } else if(OS_NAME.contains("linux")) {
             sb.append("srcClases=" + "\"" + srcClases + "\"\n");
             sb.append("libFiles=" + "\"" + libFiles + "\"\n");
             sb.append(compile + "\n");
@@ -165,7 +167,7 @@ public class ScriptBuilder {
             .collect(Collectors.joining())
         );
 
-        compile = getCompileCommand(target, libFiles.toString(), "-Werror -Xlint:all", 23);
+        compile = getCompileCommand(target, libFiles.toString(), "-Xlint:all -Xdiags:verbose", 23);
 
         if(!mainClass.isEmpty()) {
             runJar = getJavaScriptCommand(mainClass);

@@ -8,14 +8,10 @@ import application.operations.FileOperation;
 
 public class CommandUtils {
 
-    private String localPath;
-    private FileUtils fileUtils;
     private FileOperation fileOperation;
 
     public CommandUtils(String localPath) {
-        this.localPath = localPath;
         fileOperation = new FileOperation(localPath);
-        fileUtils = new FileUtils(localPath);
     }
     /**
      * extract parent from a nested path
@@ -74,80 +70,58 @@ public class CommandUtils {
      * @param jarFileName the project jar file name
      * @return the jar file command format
      */
-    private String jarTypeFormat(String jarFileName) {
-        StringBuffer jarFormat = new StringBuffer();
-        jarFormat.append("jar -c");
+    private String appendJarFormat(StringBuilder build, String mainClass) {
         boolean presentManifesto = fileOperation.haveManifesto();
-        if(presentManifesto) {
-            jarFormat.append("fm ");
+        if(presentManifesto){
+            build.append("m");
+            return"m";
+        } else if(!mainClass.isEmpty()) {
+            build.append("e");
+            return "e";
         }
-        if(!presentManifesto && jarFileName.isEmpty()) {
-            jarFormat.append("f ");
-        }
-        if(!presentManifesto && !jarFileName.isEmpty()) {
-            jarFormat.append("fe ");
-        }
-        return jarFormat.toString();
+        return "";
     }
     /**
+     * @param directory: where the lib files are
      * @param source: directory where .class files are
      * @param target: directory where .java files are, this will serve to find the mainClass
      */
-    public String jarTypeUnion(String directory, String source, String target) {
-        StringBuffer build = new StringBuffer();
+    public String jarTypeUnion(String directory, String source, String target, boolean includeLibs) {
+        StringBuilder build = new StringBuilder();
 
         String jarFileName      = fileOperation.getProjectName() + ".jar";
-        String localParent   = fileOperation.getProjectName();
-        String jarFormat     = jarTypeFormat(jarFileName);
         String mainClassName = fileOperation.getMainClass(target);
 
-        source = fileUtils.resolvePaths(localPath, source).getPath() + File.separator + " .";
+        // create and file
+        build.append("jar -cvf");
+        // m when there is manifesto and e when manifesto is not present
+        String prefix = appendJarFormat(build, mainClassName);
+        build.append(" ");
 
-        build.append(jarFormat);
+        // add jar file
+        build.append(jarFileName);
+        build.append(" ");
 
-        switch(jarFormat) {
-            case "jar -cfm ":
-                if(!directory.isEmpty()) {
-                    build.append(jarFileName);
-                    build.append(" Manifesto.txt -C ");
-                    build.append(source);
-                    build.append(directory);
-                } else {
-                    build.append(jarFileName);
-                    build.append(" Manifesto.txt -C ");
-                    build.append(source);
-                }
-                break;
-            case "jar -cf ":
-                String jarName = localParent + ".jar";
-                if(!directory.isEmpty()) {
-                    build.append(jarName);
-                    build.append(" -C ");
-                    build.append(source);
-                    build.append(directory);
-                } else {
-                    build.append(jarName);
-                    build.append(" -C ");
-                    build.append(source);
-                }
-                break;
-            case "jar -cfe ":
-                if(!directory.isEmpty()) {
-                    build.append(jarFileName);
-                    build.append(" ");
-                    build.append(mainClassName);
-                    build.append(" -C ");
-                    build.append(source);
-                    build.append(directory);
-                } else {
-                    build.append(jarFileName);
-                    build.append(" ");
-                    build.append(mainClassName);
-                    build.append(" -C ");
-                    build.append(source);
-                }
-                break;
+        // add manifesto or entry point
+        switch (prefix) {
+            case "m" -> build.append("Manifesto.txt");
+            case "e" -> build.append(mainClassName);
         }
+
+        build.append(" ");
+        // add .class files
+        build.append("-C ");
+        build.append(".");
+        build.append(File.separator);
+        build.append(source);
+        build.append(File.separator);
+        build.append(" .");
+
+        // add libs
+        if(includeLibs) {
+            build.append(directory);
+        }
+
         return build.toString();
     }
 }
