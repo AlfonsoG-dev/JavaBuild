@@ -29,8 +29,8 @@ public class CompileModel {
 
     /**
      * Create the compile command, it has two version.
-     * </br> When you create from `--scratch` you don't need individual files; you need each directory in the project that has at least one .java file. 
-     * </br> when you create from `--compile` or `--build` you only want the files that were modified later in the build process; for that you need each individual file to re-compile it.
+     * When you create from `--scratch` you don't need individual files; you need each directory in the project that has at least one .java file. 
+     * when you create from `--compile` or `--build` you only want the files that were modified later in the build process; for that you need each individual file to re-compile it.
      * @param release the java jdk version
      * @return the compile command
      */

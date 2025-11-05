@@ -21,8 +21,7 @@ public class OperationUtils {
     }
     /**
      * helper function to allow command line process execution 
-     * </br> pwsh for windows.
-     * </br> /bin/sh for linux.
+     * pwsh for windows or /bin/sh for linux.
      * @param command the command to execute
      */
     public void executeCommand(String command) {

@@ -1,7 +1,6 @@
 package application.operations;
 
 import java.io.File;
-import java.io.IOException;
 
 import java.util.Optional;
 
@@ -89,7 +88,6 @@ public class Operation {
 
     /**
      * Helper function that allow to get the author name of the manifesto file.
-     * @throws IOException
      */
     public String getAuthorName() {
         String[] lines = fileUtils.readFileLines("Manifesto.txt").split("\n");
@@ -125,7 +123,6 @@ public class Operation {
      * creates the initial files needed in at the start:
      *  Manifesto, gitignore and the mainClass file for java.
      *  @param author its the name of the author for the Manifesto file.
-     *  @throws IOException
      */
     public void createFilesOperation(String author, String source, String target) {
         Optional<String> oAuthor = Optional.ofNullable(author);
@@ -139,7 +136,6 @@ public class Operation {
     /**
      * used to list the .java or .jar or .class files in the project.
      * @param source its the folder/directory where the files are stored.
-     * @throws IOException
      */
     public void listProjectFiles(String source) {
         Optional<String> oSource = Optional.ofNullable(source);
@@ -185,7 +181,6 @@ public class Operation {
      * Performs the extraction operation using the extract command.
      * Usually you will extract the .jar files stored in the lib folder. 
      * @param extractFile the file to extract.
-     * @throws IOException the file doesn't exists
      */
     public void executeExtractionCommand() {
         List<String> extractions = cBuilder.getExtractionsCommand();
@@ -199,7 +194,6 @@ public class Operation {
     }
     /**
      * helper function to get the lib folder/directory dependency or .jar files
-     * @throws IOException
      */
     public void extractJarDependencies() {
         List<String> jars = modelUtils.getLibFiles();
@@ -231,7 +225,6 @@ public class Operation {
     /**
      * Helper function that allow to identified if you include or not in the build the lib dependency.
      * By adding the Class-Path property in the Manifesto file you exclude the lib dependency in the build.
-     * @throws IOException
      */
     public boolean haveIncludeExtraction() {
         File f = fileUtils.resolvePaths(localPath, "Manifesto.txt");
