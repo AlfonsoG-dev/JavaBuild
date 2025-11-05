@@ -87,7 +87,7 @@ public class ScriptBuilder {
         
         StringBuffer sb = new StringBuffer();
         if(OS_NAME.contains("windows")) {
-            sb.append( "$srcClases = \"" + srcClases + "\"\n");
+            sb.append("$srcClases = \"" + srcClases + "\"\n");
             sb.append("$libFiles = \"" + libFiles + "\"\n");
             sb.append("$compile = \"" + compile + "\"\n");
             sb.append("$createJar = " + "\"" + extractJar + "\"" + "\n");
@@ -167,7 +167,7 @@ public class ScriptBuilder {
             .collect(Collectors.joining())
         );
 
-        compile = getCompileCommand(target, libFiles.toString(), "-Werror -Xlint:all", 23);
+        compile = getCompileCommand(target, libFiles.toString(), "-Xlint:all -Xdiags:verbose", 23);
 
         if(!mainClass.isEmpty()) {
             runJar = getJavaScriptCommand(mainClass);
