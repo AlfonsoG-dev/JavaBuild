@@ -244,11 +244,10 @@ public class FileOperation {
         }
         return containsPath;
     }
-    public Set<String> dependFiles(String sourceURI, String packageName) {
+    public Set<String> dependFiles(List<File> sources, String packageName) {
         Set<String> files = new HashSet<>();
-        List<File> sources = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(sourceURI));
         for(File f: sources) {
-            List<String> lines = executor.executeConcurrentCallableList(fileUtils.listFileLines(f.getPath()));
+            String[] lines = fileUtils.readFileLines(f.getPath()).split("\n");
             for(String l: lines) {
                 l = l.trim().replace(";", "");
                 String packageDir = packageName;

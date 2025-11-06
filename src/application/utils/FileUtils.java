@@ -106,6 +106,7 @@ public class FileUtils {
     public List<Path> listFiles(String filePath) {
         List<Path> result = new ArrayList<>();
         try {
+            System.out.println("Reading path ...");
             result = Files.walk(Paths.get(filePath), FileVisitOption.FOLLOW_LINKS)
                 .filter(Files::isRegularFile)
                 .toList();

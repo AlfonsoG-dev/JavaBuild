@@ -10,7 +10,6 @@ import application.operations.ExecutorOperation;
 import application.operations.FileOperation;
 
 import java.io.File;
-import java.nio.file.Path;
 
 public class ModelUtils {
 
@@ -69,19 +68,16 @@ public class ModelUtils {
             .toList()
             );
         } else if((classFile.exists() && classFile.listFiles() != null) || classFile.listFiles().length > 0) {
-            // FIXME: list execution overused. search for a way to reuse the callable list of files.
-            List<Path> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()))
-                .stream()
-                .map(f -> f.toPath())
-                .filter(p -> cUtils.recompileFiles(p, sourceFile.toPath(), classFile.toPath()))
-                .toList();
-            for(Path p: files) {
-                names.add(p.normalize()+ " ");
-                String root = p.toString().replace(".java", "").split("\\.", 2)[1].split("\\" + File.separator, 2)[1].split("\\" + File.separator, 2)[0];
-                String packageName = p.toString().replace(".java", "").replace("." + File.separator + root + File.separator, "").replace(File.separator, ".");
-                Set<String> depends = fOperation.dependFiles(sourcePath, packageName);
-                for(String d: depends) {
-                    names.add(d + " ");
+            List<File> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()));
+            for(File f: files) {
+                if(cUtils.recompileFiles(f.toPath(), sourceFile.toPath(), classFile.toPath())) {
+                    names.add(f.toPath().normalize()+ " ");
+                    String root = f.toString().replace(".java", "").split("\\.", 2)[1].split("\\" + File.separator, 2)[1].split("\\" + File.separator, 2)[0];
+                    String packageName = f.toString().replace(".java", "").replace("." + File.separator + root + File.separator, "").replace(File.separator, ".");
+                    Set<String> depends = fOperation.dependFiles(files, packageName);
+                    for(String d: depends) {
+                        names.add(d + " ");
+                    }
                 }
             }
         } 
