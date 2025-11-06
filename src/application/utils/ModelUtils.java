@@ -69,6 +69,7 @@ public class ModelUtils {
             .toList()
             );
         } else if((classFile.exists() && classFile.listFiles() != null) || classFile.listFiles().length > 0) {
+            // FIXME: list execution overused. search for a way to reuse the callable list of files.
             List<Path> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()))
                 .stream()
                 .map(f -> f.toPath())
