@@ -2,6 +2,7 @@ package application.utils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ import application.operations.ExecutorOperation;
 import application.operations.FileOperation;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class ModelUtils {
 
@@ -67,12 +69,20 @@ public class ModelUtils {
             .toList()
             );
         } else if((classFile.exists() && classFile.listFiles() != null) || classFile.listFiles().length > 0) {
-            executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()))
+            List<Path> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()))
                 .stream()
                 .map(f -> f.toPath())
                 .filter(p -> cUtils.recompileFiles(p, sourceFile.toPath(), classFile.toPath()))
-                .forEach(e -> { names.add(e.normalize() + " ");
-            });
+                .toList();
+            for(Path p: files) {
+                names.add(p.normalize()+ " ");
+                String root = p.toString().replace(".java", "").split("\\.", 2)[1].split("\\" + File.separator, 2)[1].split("\\" + File.separator, 2)[0];
+                String packageName = p.toString().replace(".java", "").replace("." + File.separator + root + File.separator, "").replace(File.separator, ".");
+                Set<String> depends = fOperation.dependFiles(sourcePath, packageName);
+                for(String d: depends) {
+                    names.add(d + " ");
+                }
+            }
         } 
         if(names.size() > 0) {
             b = names

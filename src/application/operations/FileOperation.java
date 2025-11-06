@@ -10,7 +10,9 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.Path;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import application.builders.ScriptBuilder;
@@ -241,6 +243,23 @@ public class FileOperation {
             }
         }
         return containsPath;
+    }
+    public Set<String> dependFiles(String sourceURI, String packageName) {
+        Set<String> files = new HashSet<>();
+        List<File> sources = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(sourceURI));
+        for(File f: sources) {
+            List<String> lines = executor.executeConcurrentCallableList(fileUtils.listFileLines(f.getPath()));
+            for(String l: lines) {
+                l = l.trim().replace(";", "");
+                String packageDir = packageName;
+                if(l.startsWith("import") && l.contains(packageName)) {
+                    files.add(f.getPath());
+                } else if (l.startsWith("import") && l.contains(packageDir + "*")) {
+                    files.add(f.getPath());
+                }
+            }
+        }
+        return files;
     }
     /**
      * copy the content of one path to another
