@@ -1,5 +1,6 @@
 package application.operations;
 
+
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -246,6 +247,7 @@ public class FileOperation {
     }
     public Set<String> dependFiles(List<File> sources, String packageName) {
         Set<String> files = new HashSet<>();
+        // TODO: maybe use indexation of files to speed up this process
         for(File f: sources) {
             String[] lines = fileUtils.readFileLines(f.getPath()).split("\n");
             for(String l: lines) {
