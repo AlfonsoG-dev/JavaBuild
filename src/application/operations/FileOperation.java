@@ -143,22 +143,14 @@ public class FileOperation {
     public void createManifesto(String source, String author, boolean extract) {
         StringBuffer libJars = new StringBuffer();
         if(extract == false) {
-            List<String> jars = listLibFiles()
+            libJars.append(listLibFiles()
                 .stream()
                 .filter(p -> p.contains(".jar"))
-                .toList();
-            libJars.append(jars
-                .stream()
-                .map(e -> e + ";")
-                .collect(Collectors.joining())
+                .collect(Collectors.joining(";"))
             );
         }
-        String cleanLibsJars = libJars.toString();
-        if((libJars.length()-1) > 0) {
-            cleanLibsJars = cleanLibsJars.substring(0, cleanLibsJars.length()-1);
-        }
         scriptBuilder.writeManifesto(
-            cleanLibsJars, author, getMainClass(source), extract
+            libJars.toString(), author, getMainClass(source), extract
         );
     }
     /**
