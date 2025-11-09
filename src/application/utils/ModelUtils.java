@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import application.operations.ExecutorOperation;
@@ -69,17 +70,24 @@ public class ModelUtils {
             );
         } else if((classFile.exists() && classFile.listFiles() != null) || classFile.listFiles().length > 0) {
             List<File> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()));
+            Set<String> recompileFiles = new HashSet<>();
+            // add only re-compile files
             for(File f: files) {
                 if(cUtils.recompileFiles(f.toPath(), sourceFile.toPath(), classFile.toPath())) {
-                    names.add(f.toPath().normalize()+ " ");
-                    String root = f.toString().replace(".java", "").split("\\.", 2)[1].split("\\" + File.separator, 2)[1].split("\\" + File.separator, 2)[0];
-                    String packageName = f.toString().replace(".java", "").replace("." + File.separator + root + File.separator, "").replace(File.separator, ".");
-                    Set<String> depends = fOperation.dependFiles(files, packageName);
-                    for(String d: depends) {
-                        names.add(d + " ");
-                    }
+                    recompileFiles.add(f.toString());
                 }
             }
+            // add dependencies of re-compile files
+            for(String f: recompileFiles) {
+                String root = f.replace(".java", "").split("\\.", 2)[1].split("\\" + File.separator, 2)[1].split("\\" + File.separator, 2)[0];
+                String packageName = f.replace(".java", "").replace("." + File.separator + root + File.separator, "").replace(File.separator, ".");
+                recompileFiles.addAll(fOperation.dependFiles(files, packageName));
+            }
+            // add unique entry files to names
+            recompileFiles.stream()
+            .forEach(f -> {
+                names.add(f + " ");
+            });
         } 
         if(names.size() > 0) {
             b = names
