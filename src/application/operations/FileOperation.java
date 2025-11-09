@@ -2,8 +2,6 @@ package application.operations;
 
 
 import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -65,40 +63,22 @@ public class FileOperation {
 
     /**
      * main class of the project
-     * @throws IOException if the file can't be read.
      * @return main class file name or empty
      */
     public String getMainClass(String source) {
-        BufferedReader br = null;
         String mainName = "";
         String root = source.split("\\" + File.separator)[0];
         if(!new File(source).exists()) return "";
-        try {
-            List<File> files = fileUtils.listLimitNestedFiles(source, 2)
-            .stream()
-            .map(Path::toFile)
-            .toList();
-            outter:for(File f: files) {
-                if(f.isFile() && !f.getName().equals("TestLauncher.java")) {
-                    br = new BufferedReader(new FileReader(f));
-                    while(br.ready()) {
-                        if(br.readLine().contains("public static void main")) {
-                            mainName = f.getPath().replace(root + File.separator, "").replace(".java", "").replace(File.separator, ".");
-                            break outter;
-                        }
+        List<Path> files = fileUtils.listLimitNestedFiles(source, 2);
+        outter:for(Path f: files) {
+            if(Files.isRegularFile(f) && !f.getFileName().toString().equals("TestLauncher.java")) {
+                String[] lines = fileUtils.readFileLines(f.toString()).split("\n");
+                for(String l: lines) {
+                    if(l.contains("public static void main")) {
+                        mainName = f.toString().replace(root + File.separator, "").replace(".java", "").replace(File.separator, ".");
+                        break outter;
                     }
                 }
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        } finally {
-            if(br != null) {
-                try {
-                    br.close();
-                } catch(IOException e) {
-                    e.printStackTrace();
-                }
-                br = null;
             }
         }
         return mainName;
