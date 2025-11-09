@@ -62,11 +62,11 @@ public class ModelUtils {
         }
         if((classFile.exists() && classFile.listFiles() == null) || !classFile.exists()) {
             names.addAll(fOperation.listSourceDirs(sourcePath)
-            .stream()
-            .map(n -> new File(n))
-            .filter(n -> fUtils.validateContent(n))
-            .map(n -> n.getPath() + File.separator + "*.java ")
-            .toList()
+                .stream()
+                .map(n -> new File(n))
+                .filter(n -> fUtils.validateContent(n))
+                .map(n -> n.getPath() + File.separator + "*.java ")
+                .toList()
             );
         } else if((classFile.exists() && classFile.listFiles() != null) || classFile.listFiles().length > 0) {
             List<File> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()));
@@ -84,10 +84,10 @@ public class ModelUtils {
                 recompileFiles.addAll(fOperation.dependFiles(files, packageName));
             }
             // add unique entry files to names
-            recompileFiles.stream()
-            .forEach(f -> {
-                names.add(f + " ");
-            });
+            names.add(recompileFiles
+                .stream()
+                .collect(Collectors.joining(" "))
+            );
         } 
         if(names.size() > 0) {
             b = names
@@ -105,9 +105,7 @@ public class ModelUtils {
             libfiles
                 .stream()
                 .filter(e -> e.contains(".jar"))
-                .forEach(e -> {
-                     names.add(e);
-                });
+                .forEach(e -> names.add(e));
         }
         return names;
     }
@@ -120,8 +118,7 @@ public class ModelUtils {
         if(libFiles.size() > 0) {
             b = libFiles
                 .stream()
-                .map(e -> e + ";")
-                .collect(Collectors.joining());
+                .collect(Collectors.joining(";"));
         } 
         return b;
     }
