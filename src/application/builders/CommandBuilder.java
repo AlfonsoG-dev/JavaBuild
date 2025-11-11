@@ -1,5 +1,6 @@
 package application.builders;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,18 +47,21 @@ public class CommandBuilder {
      */
     public List<String> getExtractionsCommand() {
         File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
+        List<String> commands = new ArrayList<>();
     
-        return executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(extractionFile.getPath()))
-            .stream()
-            .filter(file -> file.isFile() && file.getName().endsWith(".jar"))
-            .map(file -> {
+        List<File> files = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(extractionFile.getPath()));
+        if(files.isEmpty())  return null;
+
+        for(File file: files) {
+             if (file.isFile() && file.getName().endsWith(".jar")) {
                 String jarFileName = file.getName();
                 String jarParent   = file.getParent();
                 String extractJAR  = "jar -xf " + jarFileName;
                 String deleteJAR   = "rm -r " + jarFileName;
-                return "cd " + jarParent + " && " + extractJAR + " && " + deleteJAR;
-            })
-            .toList();
+                commands.add("cd " + jarParent + " && " + extractJAR + " && " + deleteJAR);
+             }
+        }
+        return commands;
     }
 
     /**
