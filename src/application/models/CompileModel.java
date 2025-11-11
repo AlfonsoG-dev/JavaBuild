@@ -71,7 +71,7 @@ public class CompileModel {
         } else {
             compile.append(format);
             if(!libFiles.isEmpty()) {
-                String cb = libFiles.substring(0, libFiles.length()-1);
+                String cb = libFiles.toString().trim();
 
                 cLibFiles.append("'");
                 cLibFiles.append(cb);
