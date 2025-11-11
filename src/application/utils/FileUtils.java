@@ -138,10 +138,17 @@ public class FileUtils {
         return new Callable<List<File>>() {
             @Override
             public List<File> call() {
-                return listFiles(filePath)
-                .stream()
-                .map(Path::toFile)
-                .toList();
+                List<File> files = new ArrayList<>();
+                try {
+                    files.addAll(Files.walk(Paths.get(filePath), FileVisitOption.FOLLOW_LINKS)
+                        .filter(Files::isRegularFile)
+                        .map(Path::toFile)
+                        .toList()
+                    );
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+                return files;
             }
         };
     }

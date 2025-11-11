@@ -93,7 +93,7 @@ public class CommandUtils {
         String mainClassName = fileOperation.getMainClass(target);
 
         // create and file
-        build.append("jar -cvf");
+        build.append("jar -cf");
         // m when there is manifesto and e when manifesto is not present
         String prefix = appendJarFormat(build, mainClassName);
         build.append(" ");
