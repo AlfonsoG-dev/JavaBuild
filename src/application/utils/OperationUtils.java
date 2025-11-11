@@ -29,7 +29,7 @@ public class OperationUtils {
             String localFULL = new File(localPath).getCanonicalPath();
             File local = new File(localFULL);
             if(command == null || command.isEmpty()) {
-                System.out.println("[Warnning] Empty command");
+                System.out.println("[Warning] Empty command");
                 command = "echo Happy-Day";
             } 
             System.out.println("[Command] " + command);
@@ -52,7 +52,7 @@ public class OperationUtils {
             if(p != null) {
                 try {
                     p.waitFor();
-                    p.destroy();;
+                    p.destroy();
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
