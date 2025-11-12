@@ -11,6 +11,7 @@ import application.operations.ExecutorOperation;
 import application.operations.FileOperation;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class ModelUtils {
 
@@ -69,12 +70,12 @@ public class ModelUtils {
                 .toList()
             );
         } else if((classFile.exists() && classFile.listFiles() != null) || classFile.listFiles().length > 0) {
-            List<File> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()));
+            List<Path> files = executor.executeConcurrentCallableList(fUtils.listFilesFromPath(sourceFile.toString()));
             Set<String> recompileFiles = new HashSet<>();
             // add only re-compile files
-            for(File f: files) {
-                if(cUtils.recompileFiles(f.toPath(), sourceFile.toPath(), classFile.toPath())) {
-                    recompileFiles.add(f.toString());
+            for(Path p: files) {
+                if(cUtils.recompileFiles(p, sourceFile.toPath(), classFile.toPath())) {
+                    recompileFiles.add(p.toString());
                 }
             }
             // add dependencies of re-compile files

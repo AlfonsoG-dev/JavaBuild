@@ -225,18 +225,18 @@ public class FileOperation {
         }
         return false;
     }
-    public Set<String> dependFiles(List<File> sources, String packageName) {
+    public Set<String> dependFiles(List<Path> sources, String packageName) {
         Set<String> files = new HashSet<>();
         // TODO: maybe use indexation of files to speed up this process
-        for(File f: sources) {
-            String[] lines = fileUtils.readFileLines(f.getPath()).split("\n");
+        for(Path p: sources) {
+            String[] lines = fileUtils.readFileLines(p.toString()).split("\n");
             for(String l: lines) {
                 l = l.trim().replace(";", "");
                 String packageDir = packageName;
                 if(l.startsWith("import") && l.contains(packageName)) {
-                    files.add(f.getPath());
+                    files.add(p.toString());
                 } else if (l.startsWith("import") && l.contains(packageDir + "*")) {
-                    files.add(f.getPath());
+                    files.add(p.toString());
                 }
             }
         }
@@ -264,21 +264,21 @@ public class FileOperation {
             }
         }
         if(sf.isDirectory()) {
-            List<File> copiedFiles = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(sourceFilePath))
+            List<Path> copiedFiles = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(sourceFilePath))
                 .stream()
-                .filter(e -> !e.getPath().contains("git"))
+                .filter(e -> !e.toString().contains("git"))
                 .toList();
             if(copiedFiles.size() > 0) {
                 copiedFiles
                     .parallelStream()
                     .forEach( e -> {
                         try {
-                            String n = fileUtils.createTargetFromParentPath(sourceFilePath, e.getCanonicalPath());
+                            String n = fileUtils.createTargetFromParentPath(sourceFilePath, e.toFile().getCanonicalPath());
                             File targetFile = new File(targetFilePath + File.separator + n);
                             fileUtils.createParentFile(targetFilePath, targetFile.getParent());
                             System.out.println(
                             Files.copy(
-                                    e.toPath(), targetFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES
+                                    e, targetFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES
                                 )
                             );
                         } catch(IOException err) {

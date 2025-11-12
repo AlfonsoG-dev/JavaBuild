@@ -10,6 +10,7 @@ import application.utils.CommandUtils;
 import application.utils.FileUtils;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class CommandBuilder {
 
@@ -49,13 +50,13 @@ public class CommandBuilder {
         File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
         List<String> commands = new ArrayList<>();
     
-        List<File> files = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(extractionFile.getPath()));
+        List<Path> files = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(extractionFile.getPath()));
         if(files.isEmpty())  return null;
 
-        for(File file: files) {
-             if (file.isFile() && file.getName().endsWith(".jar")) {
-                String jarFileName = file.getName();
-                String jarParent   = file.getParent();
+        for(Path p: files) {
+             if (p.toFile().isFile() && p.getFileName().toString().endsWith(".jar")) {
+                String jarFileName = p.getFileName().toString();
+                String jarParent   = p.toFile().getParent();
                 String extractJAR  = "jar -xf " + jarFileName;
                 String deleteJAR   = "rm -r " + jarFileName;
                 commands.add("cd " + jarParent + " && " + extractJAR + " && " + deleteJAR);

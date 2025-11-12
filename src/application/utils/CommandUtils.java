@@ -72,14 +72,14 @@ public class CommandUtils {
      */
     private String appendJarFormat(StringBuilder build, String mainClass) {
         boolean presentManifesto = fileOperation.haveManifesto();
+        String prefix = "";
         if(presentManifesto){
-            build.append("m");
-            return"m";
+            prefix = "m";
         } else if(!mainClass.isEmpty()) {
-            build.append("e");
-            return "e";
+            prefix = "e";
         }
-        return "";
+        build.append(prefix);
+        return prefix;
     }
     /**
      * @param directory: where the lib files are

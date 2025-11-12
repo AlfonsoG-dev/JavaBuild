@@ -61,7 +61,7 @@ public class FileUtils {
      * @return the normalized path
      */
     public String getCleanPath(String filePath) {
-        return new File(filePath).toPath().normalize().toString();
+        return Paths.get(filePath).normalize().toString();
     }
     /**
      * it concatenates two paths into one
@@ -70,7 +70,7 @@ public class FileUtils {
      * @return the unified path
      */
     public File resolvePaths(String root, String children) {
-        return new File(root).toPath().resolve(children).toFile();
+        return Paths.get(root).resolve(children).toFile();
     }
     /**
      * helper function to count the files inside a directory
@@ -87,16 +87,14 @@ public class FileUtils {
      * @return true if it has .java files, false otherwise
      */
     public boolean validateContent(File f) {
-        boolean isValid = false;
         if(f.isDirectory() && f.listFiles() != null) {
             for(File v: f.listFiles()) {
                 if(v.isFile() && v.getName().contains(".java")) {
-                    isValid = true;
-                    break;
+                    return true;
                 }
             }
         }
-        return isValid;
+        return false;
     }
     /**
      * helper function to list the files inside a directory
@@ -134,15 +132,14 @@ public class FileUtils {
      * @param filePath the directory to list its files.
      * @return a Callable with the list of files.
      */
-    public Callable<List<File>> listFilesFromPath(String filePath) {
-        return new Callable<List<File>>() {
+    public Callable<List<Path>> listFilesFromPath(String filePath) {
+        return new Callable<List<Path>>() {
             @Override
-            public List<File> call() {
-                List<File> files = new ArrayList<>();
+            public List<Path> call() {
+                List<Path> files = new ArrayList<>();
                 try {
                     files.addAll(Files.walk(Paths.get(filePath), FileVisitOption.FOLLOW_LINKS)
                         .filter(Files::isRegularFile)
-                        .map(Path::toFile)
                         .toList()
                     );
                 } catch(IOException e) {

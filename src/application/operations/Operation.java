@@ -85,11 +85,6 @@ public class Operation {
             }
         }
     }
-
-    /**
-     * Helper function that allow to get the author name of the manifesto file.
-     */
-
     /**
      * create the config file operation
      * @param source where the .java files are
