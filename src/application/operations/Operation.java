@@ -89,16 +89,6 @@ public class Operation {
     /**
      * Helper function that allow to get the author name of the manifesto file.
      */
-    public String getAuthorName() {
-        String[] lines = fileUtils.readFileLines("Manifesto.txt").split("\n");
-        for(String l: lines) {
-            String k = l.split(":", 2)[0].trim();
-            if(k.equals("Created-By")) {
-                return l.split(":", 2)[1].trim();
-            }
-        }
-        return "System-Owner";
-    }
 
     /**
      * create the config file operation
@@ -112,7 +102,7 @@ public class Operation {
 
         System.out.println("[Info] Writing to manifesto...");
         fileOperation.createManifesto(
-            oSource.orElse(oSourcePath), getAuthorName(), false
+            oSource.orElse(oSourcePath), fileOperation.getAuthorName(), false
         );
         System.out.println("[Info] Writing config file...");
         configBuilder.writeConfigFile(
@@ -125,13 +115,8 @@ public class Operation {
      *  @param author its the name of the author for the Manifesto file.
      */
     public void createFilesOperation(String author, String source, String target) {
-        Optional<String> oAuthor = Optional.ofNullable(author);
-        String authorName = getAuthorName();
-        oAuthor.ifPresentOrElse(
-                value -> System.out.println("[Info] Using Author name " + value),
-                () -> System.out.println("[Info] No author provided, now using " + authorName)
-        );
-        operationUtils.createProjectFiles(oAuthor.orElse(authorName), oSourcePath, oClassPath);
+        String authorName = Optional.ofNullable(author).orElse(fileOperation.getAuthorName());
+        operationUtils.createProjectFiles(authorName, oSourcePath, oClassPath);
     }
     /**
      * used to list the .java or .jar or .class files in the project.
@@ -143,12 +128,9 @@ public class Operation {
         if(read.isFile()) {
             System.out.println("[Warning] Only directories are allowed°!");
             System.out.println(read.getPath());
-        }
-        if(read.isDirectory()) {
+        } else if(read.isDirectory()) {
             executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(read.getPath()))
                 .stream()
-                .map(e -> e.getPath())
-                .filter(e -> e.contains(".java") || e.contains(".jar") || e.contains(".class"))
                 .forEach(e -> {
                     System.out.println(e);
                 }
@@ -173,9 +155,7 @@ public class Operation {
     }
     public void deleteDirectory(String dirPath) {
         System.out.println("[Info] deleting directory...");
-        operationUtils.executeCommand(
-            "rm -r " + Optional.ofNullable(dirPath).orElse(oClassPath)
-        );
+        operationUtils.executeCommand("rm -r " + Optional.ofNullable(dirPath).orElse(oClassPath));
     }
     /**
      * Performs the extraction operation using the extract command.
@@ -198,14 +178,14 @@ public class Operation {
     public void extractJarDependencies() {
         List<String> jars = modelUtils.getLibFiles();
         for(String j: jars) {
-            if(!fileOperation.extractionDirContainsPath(j)) {
-                System.out.println("[Info] extracting jar dependencies ...");
-                operationUtils.createExtractionFiles(jars);
-                // the extraction files can be more than 1
-                executeExtractionCommand();
-            } else {
+            if(fileOperation.extractionDirContainsPath(j)) {
                 System.out.println("[Info] THERE IS NO DEPENDENCIES TO EXTRACT");
+                return;
             }
+            System.out.println("[Info] extracting jar dependencies ...");
+            operationUtils.createExtractionFiles(jars);
+            // the extraction files can be more than 1
+            executeExtractionCommand();
         }
     }
     /**
@@ -249,7 +229,9 @@ public class Operation {
         String oSource = Optional.ofNullable(source).orElse(oSourcePath);
         System.out.println("[Info] creating manifesto ...");
 
-        fileOperation.createManifesto(oSource, Optional.ofNullable(author).orElse(getAuthorName()), extract);
+        fileOperation.createManifesto(
+            oSource, Optional.ofNullable(author).orElse(fileOperation.getAuthorName()), extract
+        );
     }
     /**
      * Performs the add jar dependency operation.
@@ -261,10 +243,10 @@ public class Operation {
         try {
             if(operationUtils.addJarDependency(filePath)) {
                 System.out.println("[Info] jar dependency has been added to lib folder");
-                if(extract == false) {
+                if(!extract) {
                     // add it to the manifesto to indicate if you extract its content or not.
                     fileOperation.createManifesto(
-                        oSourcePath, Optional.ofNullable(author).orElse(getAuthorName()), extract
+                        oSourcePath, Optional.ofNullable(author).orElse(fileOperation.getAuthorName()), extract
                     );
                 }
             }

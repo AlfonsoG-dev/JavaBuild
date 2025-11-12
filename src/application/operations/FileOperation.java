@@ -118,6 +118,16 @@ public class FileOperation {
     public boolean haveManifesto() {
         return fileUtils.fileExists(fileUtils.resolvePaths(localPath, "Manifesto.txt").getPath());
     }
+    public String getAuthorName() {
+        String[] lines = fileUtils.readFileLines("Manifesto.txt").split("\n");
+        for(String l: lines) {
+            String k = l.split(":", 2)[0].trim();
+            if(k.equals("Created-By")) {
+                return l.split(":", 2)[1].trim();
+            }
+        }
+        return "System-Owner";
+    }
     public void createIgnoreFile(String fileName) {
         String ignoreFiles = "";
         String[] files = {
@@ -201,7 +211,6 @@ public class FileOperation {
      * @return true if exists, false otherwise
      */
     public boolean extractionDirContainsPath(String libJarPath) {
-        boolean containsPath = false;
         File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
         File myFile = new File(libJarPath);
         String jarLibParent = myFile.getParent();
@@ -210,12 +219,11 @@ public class FileOperation {
             for(File f: extractionFile.listFiles()) {
                 String extractionDirName = new File(f.getPath()).getName();
                 if(extractionDirName.equals(jarNameParent)) {
-                    containsPath = true;
-                    break;
+                    return true;
                 }
             }
         }
-        return containsPath;
+        return false;
     }
     public Set<String> dependFiles(List<File> sources, String packageName) {
         Set<String> files = new HashSet<>();
