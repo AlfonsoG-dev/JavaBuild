@@ -78,8 +78,15 @@ public class FileUtils {
      * @return the number of files inside or 0.
      */
     public int countFiles(File f) {
+        if(f.listFiles() == null || f.listFiles().length == 0) return 0;
         File[] files = f.listFiles();
-        return (files != null) ? files.length : 0;
+        int n = 0;
+        for(File mf: files) {
+            if(mf.isFile()) {
+                ++n;
+            }
+        }
+        return n;
     }
     /**
      * validates if the directory has any .java file
