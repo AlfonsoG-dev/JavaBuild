@@ -73,7 +73,7 @@ public class CommandUtils {
     private String appendJarFormat(StringBuilder build, String mainClass) {
         boolean presentManifesto = fileOperation.haveManifesto();
         String prefix = "";
-        if(presentManifesto){
+        if(presentManifesto && !build.toString().contains("u")){
             prefix = "m";
         } else if(!mainClass.isEmpty()) {
             prefix = "e";
@@ -92,8 +92,13 @@ public class CommandUtils {
         String jarFileName      = fileOperation.getProjectName() + ".jar";
         String mainClassName = fileOperation.getMainClass(target);
 
-        // create and file
-        build.append("jar -cf");
+        // create or update jar file
+        build.append("jar -");
+        if(!new File(jarFileName).exists()) {
+            build.append("cf");
+        } else {
+            build.append("uf");
+        }
         // m when there is manifesto and e when manifesto is not present
         String prefix = appendJarFormat(build, mainClassName);
         build.append(" ");
