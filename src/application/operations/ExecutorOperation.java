@@ -18,30 +18,20 @@ public class ExecutorOperation {
      * @return the result of the execution of the generic type T
      */
     public <T> T executeConcurrentCallableList(Callable<T> task) {
-        T value = null;
-        ExecutorService executor = Executors.newCachedThreadPool();
-        try {
+        try(ExecutorService executor = Executors.newCachedThreadPool()) {
             Future<T> result = executor.submit(task);
             if(!result.isDone()) {
                 System.out.println("[Info] Waiting for data...");
             }
-            value = result.get();
+            T value = result.get();
             if(result.isDone()) {
                 System.out.println("[Info] Data is ready...");
             }
+            return value;
         } catch (ExecutionException | InterruptedException | CancellationException e) {
             e.printStackTrace();
-        } finally {
-            executor.shutdown();
-            try {
-                if(!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            return null;
         }
-        return value;
     }
 
 }
