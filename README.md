@@ -51,6 +51,8 @@
 - [x] test functions and make sure the latest changes regarding *test execution* didn't break anything.
 
 # TODO's
+- [ ] fix build process when finding gradle project structure.
+> Now its broken because it can't find main class correctly.
 - [ ] When including a lib file, the project didn't read the lib path of Manifesto `Class-Path: lib\directory\app.jar`, this line allow the build tool to ignore the dependency and build the project using the Manifesto class path. Now it appears to be broken.
 - [ ] when using config file, changing any value will modify subsequently manifesto file.
 - [ ] when creating a command use ";" on **windows**, ":" for other operating systems
