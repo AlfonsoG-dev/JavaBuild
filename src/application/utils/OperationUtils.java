@@ -12,7 +12,7 @@ import application.operations.FileOperation;
 
 public class OperationUtils {
     private static final String CONSOL_FORMAT = "%s%n";
-    private static final boolean OS_NAME_WINDOWS = System.getProperty("os.name").contains("windows");
+    private static final boolean OS_NAME_WINDOWS = System.getProperty("os.name").contains("Windows");
 
     private FileOperation fileOperation;
     private String localPath;
