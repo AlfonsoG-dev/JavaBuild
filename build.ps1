@@ -1,6 +1,6 @@
-$srcClases = "src\application\*.java src\application\builders\*.java src\application\models\*.java src\application\operations\*.java src\application\utils\*.java "
+$srcClasses = "src\application\*.java src\application\builders\*.java src\application\models\*.java src\application\operations\*.java src\application\utils\*.java "
 $libFiles = ""
-$compile = "javac --release 23 -Werror -Xlint:all -d .\bin\ $srcClases"
+$compile = "javac --release 23 -Werror -Xlint:all -d .\bin\ $srcClasses"
 $createJar = "jar -cfm JavaBuild.jar Manifesto.txt -C .\bin\ ."
 $javaCommand = "java -jar JavaBuild.jar"
 $runCommand = "$compile" + " && " + "$createJar" + " && " +"$javaCommand"
