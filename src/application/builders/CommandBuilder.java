@@ -51,7 +51,7 @@ public class CommandBuilder {
         List<String> commands = new ArrayList<>();
     
         List<Path> files = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(extractionFile.getPath()));
-        if(files.isEmpty())  return null;
+        if(files.isEmpty())  return commands;
 
         for(Path p: files) {
              if (p.toFile().isFile() && p.getFileName().toString().endsWith(".jar")) {
@@ -73,17 +73,20 @@ public class CommandBuilder {
      * @return the jar command for the build process.
      */
     public String getJarFileCommand(boolean includeExtraction, String source, String target) {
-        String directory = "";
+        StringBuilder directory = new StringBuilder();
         
         if(!includeExtraction) {
-            return commandUtils.jarTypeUnion(directory, source, target, includeExtraction);
+            return commandUtils.jarTypeUnion(directory.toString(), source, target, includeExtraction);
         } 
         File extractionFile = fileUtils.resolvePaths(localPath, "extractionFiles");
         fileUtils.createDir(extractionFile.getPath());
         for(File extractionDir: extractionFile.listFiles()) {
-            directory += " -C " + extractionDir.getPath() + File.separator + " .";
+            directory.append(" -C ");
+            directory.append(extractionDir.getPath());
+            directory.append(File.separator);
+            directory.append(" .");
         }
-        return commandUtils.jarTypeUnion(directory, source, target, includeExtraction);
+        return commandUtils.jarTypeUnion(directory.toString(), source, target, includeExtraction);
     }
     /**
      * creates the run command or the execute command.
@@ -95,10 +98,10 @@ public class CommandBuilder {
     public String getRunCommand(List<String> libJars, String className, String source, String target) {
         String command  = "java -cp '" + target;
 
-        StringBuffer jarFiles = new StringBuffer();
+        StringBuilder jarFiles = new StringBuilder();
         if(className.equals(" ")) return null;
 
-        if(libJars.size() > 0) {
+        if(!libJars.isEmpty()) {
             jarFiles.append(";");
             jarFiles.append(libJars
                     .stream()

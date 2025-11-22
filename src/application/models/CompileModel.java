@@ -1,6 +1,7 @@
 package application.models;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 import application.utils.CommandUtils;
@@ -8,7 +9,7 @@ import application.utils.ModelUtils;
 
 public class CompileModel {
 
-    public final static String LOCAL_PATH = "." + File.separator;
+    public static final String LOCAL_PATH = "." + File.separator;
 
     private String classPath;
     private String flags;
@@ -36,10 +37,9 @@ public class CompileModel {
      */
    public String getCompileCommand(int release) {
         // create jar files command for compile operation
-        StringBuffer 
-            libFiles = new StringBuffer(),
-            cLibFiles = new StringBuffer(),
-            compile = new StringBuffer();
+        StringBuilder libFiles = new StringBuilder();
+        StringBuilder cLibFiles = new StringBuilder();
+        StringBuilder compile = new StringBuilder();
 
         // lib files
         libFiles.append(mUtils.getJarDependencies());
@@ -49,13 +49,12 @@ public class CompileModel {
 
         Optional<String> oSource = mUtils.getSourceFiles();
         if(oSource.isEmpty()) {
-            System.out.println("[Info] No modified files to compile");
+            System.console().printf("%s%n", "[Info] No modified files to compile");
             return null;
         }
         srcClases = oSource.get();
 
         if(!srcClases.contains("*.java")) {
-            compile = new StringBuffer();
             compile.append(format);
             if(!libFiles.isEmpty()) {
                 compile.append(" '");
@@ -95,9 +94,9 @@ public class CompileModel {
     public static void verify(String sourcePath, String classPath) {
         try {
             if(sourcePath.isEmpty() || classPath.isEmpty()) {
-                throw new Exception("[Error] No empty paths allowed");
+                throw new IOException("[Error] No empty paths allowed");
             }
-        } catch(Exception e) {
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }

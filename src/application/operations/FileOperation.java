@@ -66,22 +66,20 @@ public class FileOperation {
      * @return main class file name or empty
      */
     public String getMainClass(String source) {
-        String mainName = "";
         String root = source.split("\\" + File.separator)[0];
         if(!new File(source).exists()) return "";
         List<Path> files = fileUtils.listLimitNestedFiles(source, 2);
-        outter:for(Path f: files) {
+        for(Path f: files) {
             if(Files.isRegularFile(f) && !f.getFileName().toString().equals("TestLauncher.java")) {
                 String[] lines = fileUtils.readFileLines(f.toString()).split("\n");
                 for(String l: lines) {
                     if(l.contains("public static void main")) {
-                        mainName = f.toString().replace(root + File.separator, "").replace(".java", "").replace(File.separator, ".");
-                        break outter;
+                        return f.toString().replace(root + File.separator, "").replace(".java", "").replace(File.separator, ".");
                     }
                 }
             }
         }
-        return mainName;
+        return "";
     }
     /**
      * if the main class is empty use the project name as main class
@@ -91,7 +89,8 @@ public class FileOperation {
     public String getProjectName() {
         String name = "";
         try {
-            String localParent = new File(localPath).getCanonicalPath(), localName = new File(localParent).getName();
+            String localParent = new File(localPath).getCanonicalPath();
+            String localName = new File(localParent).getName();
             name = localName;
         } catch(IOException e) {
             e.printStackTrace();
@@ -129,7 +128,7 @@ public class FileOperation {
         return "System-Owner";
     }
     public void createIgnoreFile(String fileName) {
-        String ignoreFiles = "";
+        StringBuilder ignoreFiles = new StringBuilder();
         String[] files = {
             "**bin",
             "**lib",
@@ -140,9 +139,10 @@ public class FileOperation {
             "**.exe"
         };
         for(String f: files) {
-            ignoreFiles += f + "\n";
+            ignoreFiles.append(f);
+            ignoreFiles.append("\n");
         }
-        fileUtils.writeToFile(ignoreFiles, fileName);
+        fileUtils.writeToFile(ignoreFiles.toString(), fileName);
     }
     /**
      * create the manifesto file
@@ -151,8 +151,8 @@ public class FileOperation {
      * @param extract if to include or not the .jar dependencies of lib
      */
     public void createManifesto(String source, String author, boolean extract) {
-        StringBuffer libJars = new StringBuffer();
-        if(extract == false) {
+        StringBuilder libJars = new StringBuilder();
+        if(!extract) {
             libJars.append(listLibFiles()
                 .stream()
                 .filter(p -> p.contains(".jar"))
@@ -195,7 +195,7 @@ public class FileOperation {
             target,
             listSourceDirs(source)
                 .stream()
-                .map(n -> new File(n))
+                .map(File::new)
                 .filter(n -> fileUtils.validateContent(n))
                 .map(n -> n.getPath() + File.separator + "*.java ")
                 .toList(),
@@ -227,15 +227,13 @@ public class FileOperation {
     }
     public Set<String> dependFiles(List<Path> sources, String packageName) {
         Set<String> files = new HashSet<>();
-        // TODO: maybe use indexation of files to speed up this process
+        // maybe use indexation of files to speed up this process
         for(Path p: sources) {
             String[] lines = fileUtils.readFileLines(p.toString()).split("\n");
             for(String l: lines) {
                 l = l.trim().replace(";", "");
                 String packageDir = packageName;
-                if(l.startsWith("import") && l.contains(packageName)) {
-                    files.add(p.toString());
-                } else if (l.startsWith("import") && l.contains(packageDir + "*")) {
+                if(l.startsWith("import") && (l.contains(packageName) || l.contains(packageDir + "*"))) {
                     files.add(p.toString());
                 }
             }
@@ -256,9 +254,7 @@ public class FileOperation {
             File tf = new File(targetFilePath + File.separator + sourceParentName + File.separator + sourceFileName);
             fileUtils.createParentFile(tf.getPath(), tf.getParent());
             try {
-                System.out.println(
-                    Files.copy(sf.toPath(), tf.toPath(), StandardCopyOption.COPY_ATTRIBUTES)
-                );
+                System.console().printf("%s%n", Files.copy(sf.toPath(), tf.toPath(), StandardCopyOption.COPY_ATTRIBUTES));
             } catch(IOException er) {
                 er.printStackTrace();
             }
@@ -268,7 +264,7 @@ public class FileOperation {
                 .stream()
                 .filter(e -> !e.toString().contains("git"))
                 .toList();
-            if(copiedFiles.size() > 0) {
+            if(!copiedFiles.isEmpty()) {
                 copiedFiles
                     .parallelStream()
                     .forEach( e -> {
@@ -276,11 +272,7 @@ public class FileOperation {
                             String n = fileUtils.createTargetFromParentPath(sourceFilePath, e.toFile().getCanonicalPath());
                             File targetFile = new File(targetFilePath + File.separator + n);
                             fileUtils.createParentFile(targetFilePath, targetFile.getParent());
-                            System.out.println(
-                            Files.copy(
-                                    e, targetFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES
-                                )
-                            );
+                            System.console().printf("%s%n", Files.copy(e, targetFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES));
                         } catch(IOException err) {
                             err.printStackTrace();
                         }

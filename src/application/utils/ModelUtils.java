@@ -14,6 +14,7 @@ import java.io.File;
 import java.nio.file.Path;
 
 public class ModelUtils {
+    private static final String CONSOL_FORMAT = "%s%n";
 
     private String sourcePath;
     private String classPath;
@@ -58,13 +59,13 @@ public class ModelUtils {
         File sourceFile = fUtils.resolvePaths(localPath, sourcePath);
         File classFile = fUtils.resolvePaths(localPath, classPath);
         if(sourceFile.listFiles() == null) {
-            System.out.println("[Info] " + sourceFile.getPath() + " is empty");
+            System.console().printf(CONSOL_FORMAT, "[Info] " + sourceFile.getPath() + " is empty");
             return Optional.ofNullable(b);
         }
         if((classFile.exists() && classFile.listFiles() == null) || !classFile.exists()) {
             names.addAll(fOperation.listSourceDirs(sourcePath)
                 .stream()
-                .map(n -> new File(n))
+                .map(File::new)
                 .filter(n -> fUtils.validateContent(n))
                 .map(n -> n.getPath() + File.separator + "*.java ")
                 .toList()
@@ -90,7 +91,7 @@ public class ModelUtils {
                 .collect(Collectors.joining(" "))
             );
         } 
-        if(names.size() > 0) {
+        if(!names.isEmpty()) {
             b = names
             .stream()
             .collect(Collectors.joining());
@@ -101,12 +102,14 @@ public class ModelUtils {
      * list of lib files
      */
     public List<String> getLibFiles() { 
-        List<String> names = new ArrayList<>(), libfiles = fOperation.listLibFiles();
-        if(libfiles.size() > 0) {
-            libfiles
+        List<String> names = new ArrayList<>();
+        List<String> libfiles = fOperation.listLibFiles();
+        if(!libfiles.isEmpty()) {
+            names.addAll(libfiles
                 .stream()
                 .filter(e -> e.contains(".jar"))
-                .forEach(e -> names.add(e));
+                .toList()
+            );
         }
         return names;
     }
@@ -116,7 +119,7 @@ public class ModelUtils {
     public String getJarDependencies() {
         String b = "";
         List<String> libFiles = getLibFiles();
-        if(libFiles.size() > 0) {
+        if(!libFiles.isEmpty()) {
             b = libFiles
                 .stream()
                 .collect(Collectors.joining(";"));

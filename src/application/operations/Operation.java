@@ -1,7 +1,7 @@
 package application.operations;
 
 import java.io.File;
-
+import java.nio.file.Path;
 import java.util.Optional;
 
 import application.builders.CommandBuilder;
@@ -12,13 +12,14 @@ import application.utils.ModelUtils;
 import application.utils.OperationUtils;
 
 import java.util.List;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Its the perform class of the java command
  */
 public class Operation {
-    private final String JAVA_VERSION = System.getProperty("java.specification.version");
+    private static final String JAVA_VERSION = System.getProperty("java.specification.version");
+    private static final String CONSOL_FORMAT = "%s%n";
 
     private String localPath;
     private OperationUtils operationUtils;
@@ -47,7 +48,7 @@ public class Operation {
         operationUtils = new OperationUtils(localPath, fileOperation);
         configBuilder = new ConfigBuilder(localPath, fileUtils, fileOperation);
     }
-    private HashMap<String, String> getConfigData() {
+    private Map<String, String> getConfigData() {
         return configBuilder.getConfigValues();
     }
     public void initializeENV() {
@@ -77,11 +78,11 @@ public class Operation {
             "docs",
             "extractionFiles"
         };
-        System.out.println("[Info] Creating project ...");
+        System.console().printf(CONSOL_FORMAT, "[Info] Creating project ...");
         for(String n: names) {
             File f = fileUtils.resolvePaths(localPath, n);
             if(!f.exists() && f.mkdir()) {
-                System.out.println("[Info] Created " + f.getPath());
+                System.console().printf(CONSOL_FORMAT, "[Info] Created " + f.getPath());
             }
         }
     }
@@ -95,11 +96,11 @@ public class Operation {
         Optional<String> oSource = Optional.ofNullable(source);
         Optional<String> oTarget = Optional.ofNullable(target);
 
-        System.out.println("[Info] Writing to manifesto...");
+        System.console().printf(CONSOL_FORMAT, "[Info] Writing to manifesto...");
         fileOperation.createManifesto(
             oSource.orElse(oSourcePath), fileOperation.getAuthorName(), false
         );
-        System.out.println("[Info] Writing config file...");
+        System.console().printf(CONSOL_FORMAT, "[Info] Writing config file...");
         configBuilder.writeConfigFile(
             oRoot.orElse(oRootPath),oSource.orElse(oSourcePath), oTarget.orElse(oClassPath), mainClass
         );
@@ -111,7 +112,11 @@ public class Operation {
      */
     public void createFilesOperation(String author, String source, String target) {
         String authorName = Optional.ofNullable(author).orElse(fileOperation.getAuthorName());
-        operationUtils.createProjectFiles(authorName, oSourcePath, oClassPath);
+        operationUtils.createProjectFiles(
+            authorName,
+            Optional.ofNullable(source).orElse(oSourcePath),
+            Optional.ofNullable(target).orElse(oClassPath)
+        );
     }
     /**
      * used to list the .java or .jar or .class files in the project.
@@ -121,15 +126,13 @@ public class Operation {
         Optional<String> oSource = Optional.ofNullable(source);
         File read = fileUtils.resolvePaths(localPath, oSource.orElse(oSourcePath));
         if(read.isFile()) {
-            System.out.println("[Warning] Only directories are allowed°!");
-            System.out.println(read.getPath());
+            System.console().printf(CONSOL_FORMAT, "[Warning] Only directories are allowed°!");
+            System.console().printf(CONSOL_FORMAT, read.getPath());
         } else if(read.isDirectory()) {
-            executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(read.getPath()))
-                .stream()
-                .forEach(e -> {
-                    System.out.println(e);
-                }
-            );
+            List<Path> files = executor.executeConcurrentCallableList(fileUtils.listFilesFromPath(read.getPath()));
+            for(Path p: files) {
+                System.console().printf(CONSOL_FORMAT, p.toString());
+            }
         }
     }
     /**
@@ -145,11 +148,11 @@ public class Operation {
             oCommandFlags,
             Integer.parseInt(Optional.ofNullable(release).orElse(JAVA_VERSION))
         );
-        System.out.println("[Info] compile ...");
+        System.console().printf(CONSOL_FORMAT, "[Info] compile ...");
         operationUtils.executeCommand(compileCommand);
     }
     public void deleteDirectory(String dirPath) {
-        System.out.println("[Info] deleting directory...");
+        System.console().printf(CONSOL_FORMAT, "[Info] deleting directory...");
         operationUtils.executeCommand("rm -r " + Optional.ofNullable(dirPath).orElse(oClassPath));
     }
     /**
@@ -164,7 +167,7 @@ public class Operation {
                 operationUtils.executeCommand(e);
             }
         } else {
-            System.out.println("[Info] NO EXTRACTION FILES");
+            System.console().printf(CONSOL_FORMAT, "[Info] NO EXTRACTION FILES");
         }
     }
     /**
@@ -174,10 +177,10 @@ public class Operation {
         List<String> jars = modelUtils.getLibFiles();
         for(String j: jars) {
             if(fileOperation.extractionDirContainsPath(j)) {
-                System.out.println("[Info] THERE IS NO DEPENDENCIES TO EXTRACT");
+                System.console().printf(CONSOL_FORMAT, "[Info] THERE IS NO DEPENDENCIES TO EXTRACT");
                 return;
             }
-            System.out.println("[Info] extracting jar dependencies ...");
+            System.console().printf(CONSOL_FORMAT, "[Info] extracting jar dependencies ...");
             operationUtils.createExtractionFiles(jars);
             // the extraction files can be more than 1
             executeExtractionCommand();
@@ -194,7 +197,7 @@ public class Operation {
             Optional.ofNullable(source).orElse(oClassPath),
             Optional.ofNullable(target).orElse(oSourcePath)
         );
-        System.out.println("[Info] creating jar file ...");
+        System.console().printf(CONSOL_FORMAT, "[Info] creating jar file ...");
         operationUtils.executeCommand(command);
     }
     /**
@@ -204,7 +207,7 @@ public class Operation {
     public boolean haveIncludeExtraction() {
         File f = fileUtils.resolvePaths(localPath, "Manifesto.txt");
         if(!f.exists()) {
-            System.err.println("[Error] Manifesto doesn't exists");
+            System.console().printf(CONSOL_FORMAT, "[Error] Manifesto doesn't exists");
             return false;
         }
         String[] lines = fileUtils.readFileLines(f.getPath()).split("\n");
@@ -220,9 +223,9 @@ public class Operation {
      * @param extract boolean value that indicates if you include or not the jar dependencies in the build.
      * @param author name of the author of the project.
      */
-    public void createIncludeExtractions(boolean extract, String author, String mainClass, String source, String target) {
+    public void createIncludeExtractions(boolean extract, String author, String source) {
         String oSource = Optional.ofNullable(source).orElse(oSourcePath);
-        System.out.println("[Info] creating manifesto ...");
+        System.console().printf(CONSOL_FORMAT, "[Info] creating manifesto ...");
 
         fileOperation.createManifesto(
             oSource, Optional.ofNullable(author).orElse(fileOperation.getAuthorName()), extract
@@ -237,7 +240,7 @@ public class Operation {
     public void createAddJarFileOperation(String filePath, String author, boolean extract) {
         try {
             if(operationUtils.addJarDependency(filePath)) {
-                System.out.println("[Info] jar dependency has been added to lib folder");
+                System.console().printf(CONSOL_FORMAT, "[Info] jar dependency has been added to lib folder");
                 if(!extract) {
                     // add it to the manifesto to indicate if you extract its content or not.
                     fileOperation.createManifesto(
@@ -255,7 +258,7 @@ public class Operation {
      * @param extract Boolean value that indicates if you include or not the jar dependencies in the build.
      */
     public void buildScript(boolean extract, String fileName, String source, String target) {
-        System.out.println("[Info] Creating build script...");
+        System.console().printf(CONSOL_FORMAT, "[Info] Creating build script...");
         fileOperation.createScript(
             Optional.ofNullable(source).orElse(oSourcePath),
             Optional.ofNullable(target).orElse(oClassPath),
@@ -277,7 +280,7 @@ public class Operation {
             Optional.ofNullable(source).orElse(oSourcePath),
             Optional.ofNullable(target).orElse(oClassPath)
         );
-        System.out.println("[Info] running ... ");
+        System.console().printf(CONSOL_FORMAT, "[Info] running ... ");
         operationUtils.executeCommand(command);
     }
     public void compileTest(String source, String target, String release) {
@@ -287,7 +290,7 @@ public class Operation {
             oCommandFlags,
             Integer.parseInt(Optional.ofNullable(release).orElse(JAVA_VERSION))
         );
-        System.out.println("[Info] Compiling test");
+        System.console().printf(CONSOL_FORMAT, "[Info] Compiling test");
         operationUtils.executeCommand(command);
     }
     /**
@@ -303,7 +306,7 @@ public class Operation {
             Optional.ofNullable(source).orElse(getConfigData().get("Test-Path")),
             Optional.ofNullable(target).orElse(oClassPath)
         );
-        System.out.println("[Info] Executing test ... ");
+        System.console().printf(CONSOL_FORMAT, "[Info] Executing test ... ");
         operationUtils.executeCommand(command);
     }
 }

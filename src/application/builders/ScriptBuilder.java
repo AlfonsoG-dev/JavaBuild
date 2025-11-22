@@ -1,5 +1,6 @@
 package application.builders;
 
+import java.io.Console;
 import java.io.File;
 
 import java.util.List;
@@ -8,8 +9,10 @@ import java.util.stream.Collectors;
 import application.utils.FileUtils;
 
 public class ScriptBuilder {
+    private static final Console consol = System.console();
+    private static final String CONSOL_FORMAT = "%s%n";
 
-    private final static String OS_NAME = System.getProperty("os.name").toLowerCase();
+    private static final boolean OS_NAME_WINDOWS = System.getProperty("os.name").contains("Windows");
 
     private String localPath;
     private FileUtils fileUtils;
@@ -25,7 +28,7 @@ public class ScriptBuilder {
      */
     private String getRunScriptCommand() {
         String command = "";
-        if(OS_NAME.contains("windows")) {
+        if(OS_NAME_WINDOWS) {
             command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" " +
                 "+ \" && \" +" + "\"$javaCommand\"" + "\n";
         }
@@ -38,9 +41,9 @@ public class ScriptBuilder {
      */
     private String getJavaScriptCommand(String mainClass) {
         String command = "";
-        if(OS_NAME.contains("windows")) {
+        if(OS_NAME_WINDOWS) {
             command = "$javaCommand = \"java -jar " + mainClass + ".jar\""  + "\n";
-        } else if(OS_NAME.contains("linux")) {
+        } else {
             command = "java -jar " + mainClass + ".jar\n";
         }
         return command;
@@ -51,7 +54,7 @@ public class ScriptBuilder {
      */
     private String getBuildScriptCommand() {
         String command = "";
-        if(OS_NAME.contains("windows")) {
+        if(OS_NAME_WINDOWS) {
             command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" \n";
         }
         return command;
@@ -67,15 +70,15 @@ public class ScriptBuilder {
     private String getCompileCommand(String target, String libFiles, String flags, int release) {
         String command = "javac --release " + release + " " + flags + " -d ." + File.separator + target  + File.separator;
         if(!libFiles.isEmpty()) {
-            command += " -cp '$libFiles' $srcClases";
+            command += " -cp '$libFiles' $srcClasses";
         } else {
-            command += " $srcClases";
+            command += " $srcClasses";
         }
         return command;
     }
     /**
      * union of the command for the script file build.
-     * @param srcClases the .java files
+     * @param srcClasses the .java files
      * @param libFiles the .jar files
      * @param compile the compile command
      * @param extractJar the extraction command
@@ -83,17 +86,17 @@ public class ScriptBuilder {
      * @param runCommand the union of commands
      * @return the script lines.
      */
-    public String getScriptLines(String srcClases, String libFiles, String compile, String extractJar, String runJar, String runCommand) {
+    public String getScriptLines(String srcClasses, String libFiles, String compile, String extractJar, String runJar, String runCommand) {
         
-        StringBuffer sb = new StringBuffer();
-        if(OS_NAME.contains("windows")) {
-            sb.append("$srcClases = \"" + srcClases + "\"\n");
+        StringBuilder sb = new StringBuilder();
+        if(OS_NAME_WINDOWS) {
+            sb.append("$srcClasses = \"" + srcClasses + "\"\n");
             sb.append("$libFiles = \"" + libFiles + "\"\n");
             sb.append("$compile = \"" + compile + "\"\n");
             sb.append("$createJar = " + "\"" + extractJar + "\"" + "\n");
             sb.append(runJar + runCommand + "Invoke-Expression $runCommand \n");
-        } else if(OS_NAME.contains("linux")) {
-            sb.append("srcClases=" + "\"" + srcClases + "\"\n");
+        } else {
+            sb.append("srcClasses=" + "\"" + srcClasses + "\"\n");
             sb.append("libFiles=" + "\"" + libFiles + "\"\n");
             sb.append(compile + "\n");
             sb.append(extractJar + "\n");
@@ -112,7 +115,7 @@ public class ScriptBuilder {
     public void writeManifesto(String libFiles, String authorName, String mainClass, boolean extract) {
         String author = authorName.trim();
 
-        StringBuffer m = new StringBuffer();
+        StringBuilder m = new StringBuilder();
 
         m.append("Manifest-Version: 1.0");
         m.append("\n");
@@ -127,8 +130,8 @@ public class ScriptBuilder {
             m.append(mainClass);
             m.append("\n");
         }
-        if(!libFiles.isEmpty() && extract == false) {
-            System.out.println("[Warning] Adding `.jar` dependency to the manifesto excluding its content");
+        if(!libFiles.isEmpty() && !extract) {
+            consol.printf(CONSOL_FORMAT, "[Warning] Adding `.jar` dependency to the manifesto excluding its content");
             m.append("Class-Path: ");
             m.append(libFiles);
             m.append("\n");
@@ -147,12 +150,11 @@ public class ScriptBuilder {
     List<String> libNames, boolean extract) {
         CommandBuilder cBuilder = new CommandBuilder(localPath);
 
-        StringBuffer sourceFiles = new StringBuffer();
-        StringBuffer libFiles = new StringBuffer();
-        String
-            compile = "",
-            runJar = "",
-            runCommand = "";
+        StringBuilder sourceFiles = new StringBuilder();
+        StringBuilder libFiles = new StringBuilder();
+        String compile = "";
+        String runJar = "";
+        String runCommand = "";
 
         sourceFiles.append(
             dirNames
@@ -184,7 +186,7 @@ public class ScriptBuilder {
         File buildFile = fileUtils.resolvePaths(localPath, fileName);
         fileUtils.writeToFile(lines, buildFile.getPath());
         if(fileName.contains(".sh") && buildFile.setExecutable(true)) {
-            System.out.println("[Info] change file to executable " + buildFile.getPath());
+            consol.printf(CONSOL_FORMAT, "[Info] change file to executable " + buildFile.getPath());
         }
     }
 }

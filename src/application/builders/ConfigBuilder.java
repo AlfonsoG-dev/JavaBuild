@@ -2,6 +2,7 @@ package application.builders;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import application.operations.FileOperation;
 import application.utils.FileUtils;
@@ -21,26 +22,19 @@ public class ConfigBuilder {
         this.fOperation = fOperation;
     }
     private String buildConfigLines(String[][] configuration) {
-        String lines="";
+        StringBuilder lines = new StringBuilder();
         for(int i=0; i<configuration.length; ++i) {
             for(int j=0; j<configuration[i].length; ++j) {
-                lines += configuration[i][j];
+                lines.append(configuration[i][j]);
             }
         }
-        return lines;
+        return lines.toString();
     }
     /**
-     * get the project configuration from a file.
-     * <br> pre Source-Path, Class-Path, Main-Class, Libraries, Compile-Flags. 
-     * <br> post if the config file doesn't exists you have some default values. Otherwise return the file values
-     * @return a table with the key-value of the config file.
+     * Its the default configuracion when the config file doesn't exits. 
+     * @param config - the configuration structure to populate.
      */
-    public HashMap<String, String> getConfigValues() {
-        HashMap<String, String> config = new HashMap<>();
-
-        File configFile = fUtils.resolvePaths(localPath, "config.txt"); 
-
-        if(!configFile.exists()) {
+    public void defaultConfig(Map<String, String> config) {
             // default config values not written
             String mainClass = fOperation.getMainClass("src");
             String[][] headers = {
@@ -58,6 +52,20 @@ public class ConfigBuilder {
                     config.put(headers[i][0], headers[i][j]);
                 }
             }
+    }
+    /**
+     * get the project configuration from a file.
+     * <br> pre Source-Path, Class-Path, Main-Class, Libraries, Compile-Flags. 
+     * <br> post if the config file doesn't exists you have some default values. Otherwise return the file values
+     * @return a table with the key-value of the config file.
+     */
+    public Map<String, String> getConfigValues() {
+        HashMap<String, String> config = new HashMap<>();
+
+        File configFile = fUtils.resolvePaths(localPath, "config.txt"); 
+
+        if(!configFile.exists()) {
+            defaultConfig(config);
         } else {
             // read config values from file
             String[] lines = fUtils.readFileLines(configFile.getPath()).split("\n");
@@ -115,7 +123,7 @@ public class ConfigBuilder {
                 {"\nCompile-Flags: ",  "-Werror -Xlint:all -Xdiags:verbose"}
             };
             String lines = buildConfigLines(headers);
-            System.out.println(lines);
+            System.console().printf("%s%n", lines);
             w.write(lines);
         } catch (IOException e) {
             e.printStackTrace();

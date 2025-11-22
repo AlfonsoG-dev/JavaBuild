@@ -42,9 +42,9 @@ class JavaBuild {
                     case "--jar":
                         if(haveExtractions) {
                             op.createJarOperation(true, target, source);
-                        } else {
-                            op.createJarOperation(false, target, source);
+                            break;
                         }
+                        op.createJarOperation(false, target, source);
                         break;
                     case "--script":
                         if((i+1)<args.length && !args[i+1].contains("-")) {
@@ -54,12 +54,11 @@ class JavaBuild {
                         }
                         break;
                     case "--i":
-                        String runClass = getCliValues(args, i, "--class");
                         if((i+1) < args.length && args[i+1].equals("n")) {
-                            op.createIncludeExtractions(false, author, runClass, source, target);
-                        } else {
-                            op.createIncludeExtractions(true, author, runClass, source, target);
+                            op.createIncludeExtractions(false, author, source);
+                            break;
                         }
+                        op.createIncludeExtractions(true, author, source);
                         break;
                     case "--config":
                         if((i+1) < args.length) {
@@ -97,15 +96,14 @@ class JavaBuild {
                     case "--add":
                         String include = getCliValues(args, i, "--include");
                         if((i+1) < args.length) {
-                            op.createAddJarFileOperation(args[i+1], author, include == null ? false:true);
+                            op.createAddJarFileOperation(args[i+1], author, include == null);
                         }
                         break;
                     case "--run":
                         op.compileProjectOperation(source, target, release);
                         if((i+1) < args.length) {
-                            boolean 
-                                conditionA = args[i+1].contains("-"),
-                                conditionB = args[i+1].contains("--");
+                            boolean conditionA = args[i+1].contains("-");
+                            boolean conditionB = args[i+1].contains("--");
                             if(!(conditionA || conditionB)) {
                                 op.runAppOperation(args[i+1], source, target);
                             } else {

@@ -15,17 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 public class FileUtils {
-    private File localFile;
+    private static final String CONSOL_FORMAT = "%s%n";
     private String localPath;
 
     public FileUtils(String localPath) {
         this.localPath = localPath;
     }
     public File getLocalFile() {
-        localFile = new File(localPath);
-        return localFile;
+        return new File(localPath);
     }
 
     /**
@@ -48,7 +48,7 @@ public class FileUtils {
      * @param filePath the path of the file
      */
     public void writeToFile(String lines, String filePath) {
-        System.out.println("[Info] Writing lines...\n" + lines);
+        System.console().printf(CONSOL_FORMAT, "[Info] Writing lines...\n" + lines);
         try(FileWriter w = new FileWriter(getLocalFile().toPath().resolve(filePath).toFile())) {
             w.write(lines);
         } catch(IOException e) {
@@ -110,9 +110,9 @@ public class FileUtils {
      */
     public List<Path> listFiles(String filePath) {
         List<Path> result = new ArrayList<>();
-        try {
-            System.out.println("Reading path ...");
-            result = Files.walk(Paths.get(filePath), FileVisitOption.FOLLOW_LINKS)
+        try(Stream<Path> s = Files.walk(Paths.get(filePath), FileVisitOption.FOLLOW_LINKS)) {
+            System.console().printf(CONSOL_FORMAT, "Reading path ...");
+            result = s
                 .filter(Files::isRegularFile)
                 .toList();
 
@@ -123,8 +123,8 @@ public class FileUtils {
     }
     public List<Path> listLimitNestedFiles(String filePath, int level) {
         List<Path> result = new ArrayList<>();
-        try {
-            result = Files.walk(Paths.get(filePath), level, FileVisitOption.FOLLOW_LINKS)
+        try(Stream<Path> s = Files.walk(Paths.get(filePath), level, FileVisitOption.FOLLOW_LINKS)) {
+            result = s
                 .filter(Files::isRegularFile)
                 .toList();
 
@@ -140,32 +140,20 @@ public class FileUtils {
      * @return a Callable with the list of files.
      */
     public Callable<List<Path>> listFilesFromPath(String filePath) {
-        return new Callable<List<Path>>() {
-            @Override
-            public List<Path> call() {
-                List<Path> files = new ArrayList<>();
-                try {
-                    files.addAll(Files.walk(Paths.get(filePath), FileVisitOption.FOLLOW_LINKS)
-                        .filter(Files::isRegularFile)
-                        .toList()
-                    );
-                } catch(IOException e) {
-                    e.printStackTrace();
-                }
-                return files;
+        return () -> {
+            List<Path> files = new ArrayList<>();
+            try(Stream<Path> s= Files.walk(Paths.get(filePath), FileVisitOption.FOLLOW_LINKS)) {
+                files = s
+                    .filter(Files::isRegularFile)
+                    .toList();
+            } catch(IOException e) {
+                e.printStackTrace();
             }
+            return files;
         };
     }
     public Callable<List<File>> listLimitNestedFilesFromPath(String filePath, int level) {
-        return new Callable<List<File>>() {
-            @Override
-            public List<File> call() {
-                return listLimitNestedFiles(filePath, level)
-                .stream()
-                .map(Path::toFile)
-                .toList();
-            }
-        };
+        return () -> listLimitNestedFiles(filePath, level).stream().map(Path::toFile).toList();
     }
     /**
      * helper function to list the directories inside a directory. Each directory needs to have at least one file.  
@@ -174,8 +162,8 @@ public class FileUtils {
      */
     private List<File> getDirectoryNames(String dirPath) {
         List<File> names = new ArrayList<>();
-        try {
-            names = Files.walk(Paths.get(dirPath), FileVisitOption.FOLLOW_LINKS)
+        try(Stream<Path> s = Files.walk(Paths.get(dirPath), FileVisitOption.FOLLOW_LINKS)) {
+            names = s
                 .map(Path::toFile)
                 .filter(p -> p.isDirectory() && countFiles(p) > 0)
                 .toList();
@@ -190,15 +178,7 @@ public class FileUtils {
      * @return a Callable with the list of directories.
      */
     public Callable<List<String>> listDirectoryNames(String filePath) {
-        return new Callable<List<String>>() {
-            @Override
-            public List<String> call() {
-                return getDirectoryNames(filePath)
-                .stream()
-                .map(File::getPath)
-                .toList();
-            }
-        };
+        return () -> getDirectoryNames(filePath).stream().map(File::getPath).toList();
     }
     /**
      * helper function to resolve a path from parent and children
@@ -208,8 +188,7 @@ public class FileUtils {
      */
     public String createTargetFromParentPath(String parentFile, String dirs) {
         String parentName = new File(parentFile).getParent();
-        String targetNames = dirs.replace(parentName, "");
-        return targetNames;
+        return dirs.replace(parentName, "");
     }
     /**
      * helper function to create directories.
@@ -222,12 +201,12 @@ public class FileUtils {
             String nFileName = new File(pn).toPath().normalize().toFile().getPath();
             File mio = new File(pn);
             int fileLength = new File(nFileName).toPath().getNameCount();
-            if(mio.exists() == false && fileLength > 1) {
+            if(!mio.exists() && fileLength > 1) {
                 mio.mkdirs();
-                System.out.println("[Info] created " + mio.getPath());
-            } else if(mio.exists() == false && fileLength <= 1) {
+                System.console().printf(CONSOL_FORMAT, "[Info] created " + mio.getPath());
+            } else if(!mio.exists() && fileLength <= 1) {
                 mio.mkdir();
-                System.out.println("[Info] created " + mio.getPath());
+                System.console().printf(CONSOL_FORMAT, "[Info] created " + mio.getPath());
             }
         }
     }
@@ -237,7 +216,7 @@ public class FileUtils {
      * @return the file lines
      */
     public String readFileLines(String path) {
-        StringBuffer lines = new StringBuffer();
+        StringBuilder lines = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(new File(path)))) {
             String l;
             while((l = reader.readLine()) != null) {
@@ -255,20 +234,17 @@ public class FileUtils {
      * @return a Callable with the list of lines
      */
     public Callable<List<String>> listFileLines(String filePath) {
-        return new Callable<List<String>>() {
-            @Override
-            public List<String> call() {
-                List<String> lines = new ArrayList<>();
-                try(BufferedReader reader = new BufferedReader(new FileReader(new File(filePath)))) {
-                    String line;
-                    while((line = reader.readLine()) != null) {
-                        lines.add(line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+        return () -> {
+            List<String> lines = new ArrayList<>();
+            try(BufferedReader reader = new BufferedReader(new FileReader(new File(filePath)))) {
+                String line;
+                while((line = reader.readLine()) != null) {
+                    lines.add(line);
                 }
-                return lines;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            return lines;
         };
     }
 }

@@ -2,6 +2,7 @@ package application.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -10,6 +11,9 @@ import java.util.List;
 import application.operations.FileOperation;
 
 public class OperationUtils {
+    private static final String CONSOL_FORMAT = "%s%n";
+    private static final boolean OS_NAME_WINDOWS = System.getProperty("os.name").contains("windows");
+
     private FileOperation fileOperation;
     private String localPath;
 
@@ -29,22 +33,22 @@ public class OperationUtils {
             String localFULL = new File(localPath).getCanonicalPath();
             File local = new File(localFULL);
             if(command == null || command.isEmpty()) {
-                System.out.println("[Warning] Empty command");
+                System.console().printf(CONSOL_FORMAT, "[Warning] Empty command");
                 command = "echo Happy-Day";
             } 
-            System.out.println("[Command] " + command);
-            if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+            System.console().printf(CONSOL_FORMAT, "[Command] " + command);
+            if(OS_NAME_WINDOWS) {
                 builder.command("pwsh", "-NoProfile", "-Command", command);
-            } else if(System.getProperty("os.name").toLowerCase().contains("linux")) {
+            } else {
                 builder.command("/bin/sh", "-c", command);
             }
             builder.directory(local);
             p = builder.start();
             if(p.getErrorStream() != null) {
-                CommandOutputError(p.getErrorStream());
+                commandOutputError(p.getErrorStream());
             }
             if(p.getInputStream() != null) {
-                CommandOutput(p.getInputStream());
+                commandOutput(p.getInputStream());
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -53,8 +57,9 @@ public class OperationUtils {
                 try {
                     p.waitFor();
                     p.destroy();
-                } catch(Exception e) {
+                } catch(InterruptedException e) {
                     e.printStackTrace();
+                    Thread.currentThread().interrupt();
                 }
                 p = null;
             }
@@ -64,7 +69,7 @@ public class OperationUtils {
      * helper function to show the error when the process execution fails.
      * @param miCmdStream the stream of the process execution
      */
-    public void CommandOutputError(InputStream miCmdStream) {
+    public void commandOutputError(InputStream miCmdStream) {
         try (BufferedReader miReader = new BufferedReader(new InputStreamReader(miCmdStream))) {
             String line = "";
             while(true) {
@@ -72,7 +77,7 @@ public class OperationUtils {
                 if(line == null) {
                     break;
                 }
-                System.err.println(line);
+                System.console().printf(CONSOL_FORMAT, line);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -82,7 +87,7 @@ public class OperationUtils {
      * helper function to show the result of the execution when the process is successful
      * @param miCmdStream the stream of the process execution
      */
-    public void CommandOutput(InputStream miCmdStream) {
+    public void commandOutput(InputStream miCmdStream) {
         try (BufferedReader miReader = new BufferedReader(new InputStreamReader(miCmdStream))) {
             String line = "";
             while(true) {
@@ -90,7 +95,7 @@ public class OperationUtils {
                 if(line == null) {
                     break;
                 }
-                System.out.println(line);
+                System.console().printf(CONSOL_FORMAT, line);
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -106,7 +111,7 @@ public class OperationUtils {
         try {
             String mainDirName = new File(localPath).getCanonicalPath();
             String mainClass   = new File(mainDirName).getName();
-            System.out.println("[Info] Creating files...");
+            System.console().printf(CONSOL_FORMAT, "[Info] Creating files...");
             fileOperation.createIgnoreFile(".gitignore");
             fileOperation.createManifesto(source, author, false);
             fileOperation.createMainClass(source, mainClass + ".java");
@@ -120,27 +125,25 @@ public class OperationUtils {
      */
     public void createExtractionFiles(List<String> jars) {
         File extraction = new File(localPath + File.separator + "extractionFiles");
-        if(extraction.exists() == false && extraction.mkdir()) {
-            System.out.println("[Info] Creating extractions files...");
+        if(!extraction.exists() && extraction.mkdir()) {
+            System.console().printf(CONSOL_FORMAT, "[Info] Creating extractions files...");
         }
         jars
             .parallelStream()
-            .forEach(e -> {
-                fileOperation.copyFilesfromSourceToTarget(e, extraction.getPath());
-            });
+            .forEach(e -> fileOperation.copyFilesfromSourceToTarget(e, extraction.getPath()));
     }
     /**
      * helper function to copy the content of a directory and add it as a project dependency
      * @param jarFilePath the .jar file to add as dependency
      * @return true if the .jar file is added, false otherwise
      */
-    public boolean addJarDependency(String jarFilePath) throws Exception {
-        System.out.println("[Info] adding jar dependency in process ...");
+    public boolean addJarDependency(String jarFilePath) throws IOException {
+        System.console().printf(CONSOL_FORMAT, "[Info] adding jar dependency in process ...");
         String sourceFilePath = "";
         boolean isAdded = false;
         File jarFile = new File(jarFilePath);
         if(!jarFile.exists()) {
-            throw new Exception("[Error] Jar file not found");
+            throw new IOException("[Error] Jar file not found");
         }
         if(jarFile.isFile()) {
             sourceFilePath = jarFile.getParent();
@@ -149,14 +152,14 @@ public class OperationUtils {
         }
         String externalJarName = new File(sourceFilePath).getName();
         File libFile = new File(localPath + File.separator + "lib" + File.separator+ externalJarName);
-        if(libFile.exists() == false) {
+        if(!libFile.exists()) {
             fileOperation.copyFilesfromSourceToTarget(
                 sourceFilePath,
                 new File(localPath + File.separator + "lib").getPath()
             );
             isAdded = true;
         } else {
-            System.out.println("[Info] DEPENDENCY ALREADY INSIDE THE PROJECT");
+            System.console().printf(CONSOL_FORMAT, "[Info] DEPENDENCY ALREADY INSIDE THE PROJECT");
         }
         return isAdded;
     }
@@ -167,9 +170,9 @@ public class OperationUtils {
      */
     public String getBuildFileName(String fileName) {
         String name = "";
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+        if(OS_NAME_WINDOWS) {
             name = fileName + ".ps1";
-        } else if(System.getProperty("os.name").toLowerCase().contains("linux")) {
+        } else {
             name = fileName + ".sh";
         }
         return name;

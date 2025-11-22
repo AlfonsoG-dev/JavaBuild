@@ -54,7 +54,7 @@ public class CommandUtils {
      * @return the format -d or -cp in the javac command
      */
     public String compileFormatType(String libFiles, String target, String flags, int release) {
-        StringBuffer compile = new StringBuffer();
+        StringBuilder compile = new StringBuilder();
         compile.append("javac --release " + release + " " + flags + " -d ." + File.separator);
         if(target.isEmpty()) {
             target = "bin";
@@ -111,6 +111,7 @@ public class CommandUtils {
         switch (prefix) {
             case "m" -> build.append("Manifesto.txt");
             case "e" -> build.append(mainClassName);
+            default -> build.append("");
         }
 
         build.append(" ");
