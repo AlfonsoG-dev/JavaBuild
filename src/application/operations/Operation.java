@@ -48,9 +48,6 @@ public class Operation {
         operationUtils = new OperationUtils(localPath, fileOperation);
         configBuilder = new ConfigBuilder(localPath, fileUtils, fileOperation);
     }
-    private Map<String, String> getConfigData() {
-        return configBuilder.getConfigValues();
-    }
     public void initializeENV() {
         oRootPath = Optional.ofNullable(getConfigData().get("Root-Path")).orElse("src");
         oSourcePath = Optional.ofNullable(getConfigData().get("Source-Path")).orElse("src");
@@ -92,17 +89,18 @@ public class Operation {
      * @param target where to store the .class files
      */
     public void createConfigFile(String rootPath, String source, String target, String mainClass) {
-        Optional<String> oRoot = Optional.ofNullable(rootPath);
-        Optional<String> oSource = Optional.ofNullable(source);
-        Optional<String> oTarget = Optional.ofNullable(target);
 
         System.console().printf(CONSOL_FORMAT, "[Info] Writing to manifesto...");
         fileOperation.createManifesto(
-            oSource.orElse(oSourcePath), fileOperation.getAuthorName(), false
+            Optional.ofNullable(source).orElse(oSourcePath),
+             fileOperation.getAuthorName(), false
         );
         System.console().printf(CONSOL_FORMAT, "[Info] Writing config file...");
         configBuilder.writeConfigFile(
-            oRoot.orElse(oRootPath),oSource.orElse(oSourcePath), oTarget.orElse(oClassPath), mainClass
+            Optional.ofNullable(rootPath).orElse(oRootPath),
+            Optional.ofNullable(source).orElse(oSourcePath),
+            Optional.ofNullable(target).orElse(oClassPath),
+            mainClass
         );
     }
     /**
@@ -123,8 +121,10 @@ public class Operation {
      * @param source its the folder/directory where the files are stored.
      */
     public void listProjectFiles(String source) {
-        Optional<String> oSource = Optional.ofNullable(source);
-        File read = fileUtils.resolvePaths(localPath, oSource.orElse(oSourcePath));
+        File read = fileUtils.resolvePaths(
+            localPath,
+            Optional.ofNullable(source).orElse(oSourcePath)
+        );
         if(read.isFile()) {
             System.console().printf(CONSOL_FORMAT, "[Warning] Only directories are allowed°!");
             System.console().printf(CONSOL_FORMAT, read.getPath());
@@ -308,5 +308,8 @@ public class Operation {
         );
         System.console().printf(CONSOL_FORMAT, "[Info] Executing test ... ");
         operationUtils.executeCommand(command);
+    }
+    private Map<String, String> getConfigData() {
+        return configBuilder.getConfigValues();
     }
 }

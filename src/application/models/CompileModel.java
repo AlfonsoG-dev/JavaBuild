@@ -11,12 +11,27 @@ public class CompileModel {
 
     public static final String LOCAL_PATH = "." + File.separator;
 
+    /**
+     * verify that for this class you don't provide empty paths.
+     * @param sourcePath where the .java files are.
+     * @param classPath where to store .class files
+     */
+    public static void verify(String sourcePath, String classPath) {
+        try {
+            if(sourcePath.isEmpty() || classPath.isEmpty()) {
+                throw new IOException("[Error] No empty paths allowed");
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
     private String classPath;
+
     private String flags;
-
     private CommandUtils cUtils;
-    private ModelUtils mUtils;
 
+
+    private ModelUtils mUtils;
 
     public CompileModel(String sourcePath, String classPath, String flags) {
         this.classPath = classPath;
@@ -27,6 +42,9 @@ public class CompileModel {
         // invariant
         CompileModel.verify(sourcePath, classPath);
     }
+
+    // ----------------------------\\
+    //   Verify non-null values    \\
 
     /**
      * Create the compile command, it has two version.
@@ -45,16 +63,16 @@ public class CompileModel {
         libFiles.append(mUtils.getJarDependencies());
 
         String format = cUtils.compileFormatType(libFiles.toString(), classPath, flags, release);
-        String srcClases = "";
+        String srcClasses = "";
 
         Optional<String> oSource = mUtils.getSourceFiles();
         if(oSource.isEmpty()) {
             System.console().printf("%s%n", "[Info] No modified files to compile");
             return null;
         }
-        srcClases = oSource.get();
+        srcClasses = oSource.get();
 
-        if(!srcClases.contains("*.java")) {
+        if(!srcClasses.contains("*.java")) {
             compile.append(format);
             if(!libFiles.isEmpty()) {
                 compile.append(" '");
@@ -79,25 +97,7 @@ public class CompileModel {
                 compile.append(cLibFiles);
             }
         }
-        compile.append(srcClases);
+        compile.append(srcClasses);
         return compile.toString();
-    }
-
-    // ----------------------------\\
-    //   Verify non-null values    \\
-
-    /**
-     * verify that for this class you don't provide empty paths.
-     * @param sourcePath where the .java files are.
-     * @param classPath where to store .class files
-     */
-    public static void verify(String sourcePath, String classPath) {
-        try {
-            if(sourcePath.isEmpty() || classPath.isEmpty()) {
-                throw new IOException("[Error] No empty paths allowed");
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -23,60 +23,6 @@ public class ScriptBuilder {
     }
 
     /**
-     * run command for script file
-     * @return the command
-     */
-    private String getRunScriptCommand() {
-        String command = "";
-        if(OS_NAME_WINDOWS) {
-            command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" " +
-                "+ \" && \" +" + "\"$javaCommand\"" + "\n";
-        }
-        return command;
-    }
-    /**
-     * java jar command for script file
-     * @param mainClass the class to name the jar file
-     * @return the command
-     */
-    private String getJavaScriptCommand(String mainClass) {
-        String command = "";
-        if(OS_NAME_WINDOWS) {
-            command = "$javaCommand = \"java -jar " + mainClass + ".jar\""  + "\n";
-        } else {
-            command = "java -jar " + mainClass + ".jar\n";
-        }
-        return command;
-    }
-    /**
-     * union of command to build the project
-     * @return the command
-     */
-    private String getBuildScriptCommand() {
-        String command = "";
-        if(OS_NAME_WINDOWS) {
-            command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" \n";
-        }
-        return command;
-    }
-    /**
-     * the compile command
-     * @param target where to put the .class files
-     * @param libFiles if your project has .jar dependencies
-     * @param flags the compile flags
-     * @param release the java jdk version
-     * @return the command
-     */
-    private String getCompileCommand(String target, String libFiles, String flags, int release) {
-        String command = "javac --release " + release + " " + flags + " -d ." + File.separator + target  + File.separator;
-        if(!libFiles.isEmpty()) {
-            command += " -cp '$libFiles' $srcClasses";
-        } else {
-            command += " $srcClasses";
-        }
-        return command;
-    }
-    /**
      * union of the command for the script file build.
      * @param srcClasses the .java files
      * @param libFiles the .jar files
@@ -104,7 +50,6 @@ public class ScriptBuilder {
         }
         return sb.toString();
     }
-
     /**
      * create manifesto
      * @param libFiles the .jar files
@@ -188,5 +133,60 @@ public class ScriptBuilder {
         if(fileName.contains(".sh") && buildFile.setExecutable(true)) {
             consol.printf(CONSOL_FORMAT, "[Info] change file to executable " + buildFile.getPath());
         }
+    }
+    /**
+     * run command for script file
+     * @return the command
+     */
+    private String getRunScriptCommand() {
+        String command = "";
+        if(OS_NAME_WINDOWS) {
+            command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" " +
+                "+ \" && \" +" + "\"$javaCommand\"" + "\n";
+        }
+        return command;
+    }
+    /**
+     * java jar command for script file
+     * @param mainClass the class to name the jar file
+     * @return the command
+     */
+    private String getJavaScriptCommand(String mainClass) {
+        String command = "";
+        if(OS_NAME_WINDOWS) {
+            command = "$javaCommand = \"java -jar " + mainClass + ".jar\""  + "\n";
+        } else {
+            command = "java -jar " + mainClass + ".jar\n";
+        }
+        return command;
+    }
+
+    /**
+     * union of command to build the project
+     * @return the command
+     */
+    private String getBuildScriptCommand() {
+        String command = "";
+        if(OS_NAME_WINDOWS) {
+            command = "$runCommand = " + "\"$compile\" +" + " \" && \" +" + " \"$createJar\" \n";
+        }
+        return command;
+    }
+    /**
+     * the compile command
+     * @param target where to put the .class files
+     * @param libFiles if your project has .jar dependencies
+     * @param flags the compile flags
+     * @param release the java jdk version
+     * @return the command
+     */
+    private String getCompileCommand(String target, String libFiles, String flags, int release) {
+        String command = "javac --release " + release + " " + flags + " -d ." + File.separator + target  + File.separator;
+        if(!libFiles.isEmpty()) {
+            command += " -cp '$libFiles' $srcClasses";
+        } else {
+            command += " $srcClasses";
+        }
+        return command;
     }
 }

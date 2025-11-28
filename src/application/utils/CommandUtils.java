@@ -26,7 +26,6 @@ public class CommandUtils {
         }
         return p;
     }
-
     /**
      * validate if the file should be re-compile or not
      * @param filePath the file to evaluate
@@ -44,7 +43,6 @@ public class CommandUtils {
         File classFile = new File(classFilePath);
         return !classFile.exists() || javaFile.lastModified() > classFile.lastModified();
     }
-
     /**
      * evaluate the type of format to set the compile, -d if you don't have lib files, -cp if you have lib files
      * @param libFiles the project .jar dependencies
@@ -64,22 +62,6 @@ public class CommandUtils {
             compile.append(" -cp ");
         }
         return compile.toString();
-    }
-    /**
-     * evaluate the type of format to set the jar file creation, -c with -fm, -f, -fe,
-     * @param jarFileName the project jar file name
-     * @return the jar file command format
-     */
-    private String appendJarFormat(StringBuilder build, String mainClass) {
-        boolean presentManifesto = fileOperation.haveManifesto();
-        String prefix = "";
-        if(presentManifesto && !build.toString().contains("u")){
-            prefix = "m";
-        } else if(!mainClass.isEmpty()) {
-            prefix = "e";
-        }
-        build.append(prefix);
-        return prefix;
     }
     /**
      * @param directory: where the lib files are
@@ -129,5 +111,21 @@ public class CommandUtils {
         }
 
         return build.toString();
+    }
+    /**
+     * evaluate the type of format to set the jar file creation, -c with -fm, -f, -fe,
+     * @param jarFileName the project jar file name
+     * @return the jar file command format
+     */
+    private String appendJarFormat(StringBuilder build, String mainClass) {
+        boolean presentManifesto = fileOperation.haveManifesto();
+        String prefix = "";
+        if(presentManifesto && !build.toString().contains("u")){
+            prefix = "m";
+        } else if(!mainClass.isEmpty()) {
+            prefix = "e";
+        }
+        build.append(prefix);
+        return prefix;
     }
 }

@@ -31,7 +31,7 @@ public class ConfigBuilder {
         return lines.toString();
     }
     /**
-     * Its the default configuracion when the config file doesn't exits. 
+     * Its the default configuration when the config file doesn't exits. 
      * @param config - the configuration structure to populate.
      */
     public void defaultConfig(Map<String, String> config) {

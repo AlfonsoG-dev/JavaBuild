@@ -27,7 +27,6 @@ public class FileUtils {
     public File getLocalFile() {
         return new File(localPath);
     }
-
     /**
      * helper function to verify if the file exists
      * @param filePath the path to evaluate
@@ -156,23 +155,6 @@ public class FileUtils {
         return () -> listLimitNestedFiles(filePath, level).stream().map(Path::toFile).toList();
     }
     /**
-     * helper function to list the directories inside a directory. Each directory needs to have at least one file.  
-     * @param dirPath the directory to list its directories
-     * @return the list of directories.
-     */
-    private List<File> getDirectoryNames(String dirPath) {
-        List<File> names = new ArrayList<>();
-        try(Stream<Path> s = Files.walk(Paths.get(dirPath), FileVisitOption.FOLLOW_LINKS)) {
-            names = s
-                .map(Path::toFile)
-                .filter(p -> p.isDirectory() && countFiles(p) > 0)
-                .toList();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return names;
-    }
-    /**
      * helper function to list directories with Callable wrapping.
      * @param filePath the directory to list its directories.
      * @return a Callable with the list of directories.
@@ -246,5 +228,22 @@ public class FileUtils {
             }
             return lines;
         };
+    }
+    /**
+     * helper function to list the directories inside a directory. Each directory needs to have at least one file.  
+     * @param dirPath the directory to list its directories
+     * @return the list of directories.
+     */
+    private List<File> getDirectoryNames(String dirPath) {
+        List<File> names = new ArrayList<>();
+        try(Stream<Path> s = Files.walk(Paths.get(dirPath), FileVisitOption.FOLLOW_LINKS)) {
+            names = s
+                .map(Path::toFile)
+                .filter(p -> p.isDirectory() && countFiles(p) > 0)
+                .toList();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return names;
     }
 }
