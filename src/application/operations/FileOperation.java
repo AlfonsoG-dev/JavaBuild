@@ -2,7 +2,9 @@ package application.operations;
 
 import application.utils.FileUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -80,6 +82,25 @@ public class FileOperation {
             }
         }
         return false;
+    }
+    /**
+     * Get the configuration values from a file.
+     * @param fileURI - the configuration file to read the values.
+     * @return a map with the key, value relation of the configuration file.
+     */
+    public Map<String, String> getConfigValues(String fileURI) {
+        Map<String, String> content = new HashMap<>();
+        String[] lines = fileUtils.getFileLines(fileURI).split("\n");
+        for(String l: lines) {
+            String[] options = l.split(":", 2);
+            String k = options[0].trim();
+            String v = "";
+            if(options.length == 2) {
+                v = options[1].trim();
+            }
+            content.put(k, v);
+        }
+        return content;
     }
 
 }
