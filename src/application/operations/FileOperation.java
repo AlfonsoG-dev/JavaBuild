@@ -5,6 +5,7 @@ import application.utils.FileUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -91,6 +92,24 @@ public class FileOperation {
     public Map<String, String> getConfigValues(String fileURI) {
         Map<String, String> content = new HashMap<>();
         String[] lines = fileUtils.getFileLines(fileURI).split("\n");
+        if(lines.length == 0) {
+            String mainClassLine = "public static void main";
+            String[][] headers = {
+                    {"Root-Path:" + "src"},
+                    {"Source-Path:" + "src"},
+                    {"Class-Path:" + "bin"},
+                    {"Main-Class:" + this.searchLineInPath("src", mainClassLine, 2)},
+                    {"Test-Path:" + "src" + File.separator + "test"},
+                    {"Test-Class:" + "test.TestLauncher"},
+                    {"Libraries:" + "ignore"},
+                    {"Compile-Flags:" + "-Werror"}
+            };
+            for(int i=0; i<headers.length; ++i) {
+                for(int j=i; j<headers.length; ++j) {
+                    content.put(headers[i][0], headers[i][j]);
+                }
+            }
+        }
         for(String l: lines) {
             String[] options = l.split(":", 2);
             String k = options[0].trim();
