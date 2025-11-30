@@ -1,5 +1,4 @@
 package application.models;
-
 import java.io.File;
 import java.nio.file.Path;
 
@@ -7,7 +6,7 @@ import application.operations.FileOperation;
 
 public interface CommandModel {
     public FileOperation getFileOperation();
-    public String getCommand();
+    public String getCommand(String sourcePath, String classPath, String flags, String includeLib);
     /**
      * Give the directories the format to compile only with *.java.
      * @param pathURI - the path where source files are.
