@@ -47,6 +47,7 @@ public class FileOperation {
         return fileUtils.getPathContent(pathURI, level)
             .parallelStream()
             .filter(Files::isDirectory)
+            .filter(p -> fileUtils.countFiles(p.toString()) > 0)
             .toList();
     }
     /**
