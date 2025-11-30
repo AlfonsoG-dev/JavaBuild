@@ -16,6 +16,7 @@ public class FileOperation {
 
     /**
      * Create an instance of this class that receives the FileUtils as argument.
+     * @param fileUtils - the instance of the FileUtils class.
      */
     public FileOperation(FileUtils fileUtils) {
         this.fileUtils = fileUtils;
