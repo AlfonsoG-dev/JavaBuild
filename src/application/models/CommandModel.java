@@ -1,6 +1,37 @@
 package application.models;
 
+import java.io.File;
+import java.nio.file.Path;
+
 import application.operations.FileOperation;
 
-public record CommandModel(String root, FileOperation fileOperation) {
+public interface CommandModel {
+    public FileOperation getFileOperation();
+    public String getCommand();
+    /**
+     * Give the directories the format to compile only with *.java.
+     * @param pathURI - the path where source files are.
+     */
+    public default String prepareSourceDirs(String pathURI) {
+        StringBuilder prepared = new StringBuilder();
+        for(Path p: getFileOperation().getDirNames(pathURI, 0)) {
+            prepared.append("\"");
+            prepared.append(p.normalize().toString());
+            prepared.append(String.format("%s%s ", File.separator, "*.java\""));
+        }
+        return prepared.toString();
+    }
+    /**
+     * List the lib .jar dependencies separated by ;.
+     * @param pathURI - the path where the dependencies are.
+     */
+    public default String preparedLibFiles(String pathURI) {
+        StringBuilder prepared = new StringBuilder();
+        for(Path p: getFileOperation().getFiles(pathURI, 3)) {
+            if(p.getFileName().toString().contains(".jar")) {
+                prepared.append(String.format("%s;", p.normalize().toString()));
+            }
+        }
+        return prepared.toString();
+    }
 }
