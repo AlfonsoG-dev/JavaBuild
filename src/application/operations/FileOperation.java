@@ -75,7 +75,7 @@ public class FileOperation {
      */
     public boolean fileIsPresent(String pathURI, String fileName, int level) {
         for(Path p: this.getFiles(pathURI, level)) {
-            if(p.normalize().getFileName().toString().contains(fileName)) {
+            if(p.normalize().getFileName().toString().toLowerCase().contains(fileName.toLowerCase())) {
                 return true;
             }
         }

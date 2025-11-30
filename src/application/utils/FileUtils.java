@@ -23,7 +23,7 @@ public class FileUtils {
      * @return the list with the path content.
      */
     public List<Path> getPathContent(String pathURI, int level) {
-        level = level > 0 ? level: Integer.MAX_VALUE;
+        level = level > 0 ? level-1: Integer.MAX_VALUE;
         List<Path> content = new ArrayList<>();
         try (Stream<Path> s = Files.walk(Paths.get(pathURI), level, FileVisitOption.FOLLOW_LINKS)) {
             content.addAll(s.toList());
