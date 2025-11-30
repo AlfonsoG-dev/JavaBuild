@@ -22,7 +22,7 @@ public record CompileBuilder(FileOperation fileOperation) implements CommandMode
         if(compileFlags.isBlank()) compileFlags = "-Werror";
         command.append(String.format("%s ", compileFlags));
 
-        if(!includeLib.equals("ignore")) {
+        if(!includeLib.equals("ignore") && !preparedLibFiles(DEFAULT_LIB_PATH).isBlank()) {
             command.append(String.format("-cp '%s' ", preparedLibFiles(DEFAULT_LIB_PATH)));
         }
 
