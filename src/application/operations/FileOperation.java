@@ -66,5 +66,20 @@ public class FileOperation {
         }
         return "";
     }
+    /**
+     * Search for the existence of a file in a given path.
+     * @param pathURI - path to search for the file.
+     * @param fileName - the file to search for its existence.
+     * @param level - nested level to reach.
+     * @return true if its found, false otherwise.
+     */
+    public boolean fileIsPresent(String pathURI, String fileName, int level) {
+        for(Path p: this.getFiles(pathURI, level)) {
+            if(p.normalize().getFileName().toString().contains(fileName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
