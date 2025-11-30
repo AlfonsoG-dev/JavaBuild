@@ -46,5 +46,25 @@ public class FileOperation {
             .filter(Files::isDirectory)
             .toList();
     }
+    /**
+     * Search in the path for a specific line.
+     * <p> the line must be contained not equal.
+     * @param pathURI - the path to search for the line.
+     * @param line - the line to search.
+     * @param leve - the nested level to reach.
+     * @return the path to the file where the line were founded.
+     */
+    public String searchLineInPath(String pathURI, String line, int level) {
+        List<Path> paths = this.getFiles(pathURI, level);
+        for(Path p: paths) {
+            String[] lines = fileUtils.getFileLines(p.toString()).split("\n");
+            for(String l: lines) {
+                if(l.trim().contains(line)) {
+                    return p.normalize().toString();
+                }
+            }
+        }
+        return "";
+    }
 
 }

@@ -1,5 +1,8 @@
 package application.utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -28,5 +31,23 @@ public class FileUtils {
             e.printStackTrace();
         }
         return content;
+    }
+    /**
+     * Create a string with the file lines of the given file path.
+     * @param fileURI - the file to read its lines.
+     * @return the file lines.
+     */
+    public String getFileLines(String fileURI) {
+        StringBuilder lines = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(new File(fileURI)))) {
+            String line;
+            while((line = br.readLine()) != null) {
+                // append line and *end of line*
+                lines.append(String.format("%s%n", line));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lines.toString();
     }
 }
