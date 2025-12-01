@@ -7,6 +7,7 @@ import application.operations.FileOperation;
 public interface CommandModel {
     public FileOperation getFileOperation();
     public String getCommand(String sourcePath, String classPath, String flags, String includeLib);
+    public String getRoot(); 
     /**
      * Give the directories the format to compile only with *.java.
      * @param pathURI - the path where source files are.
@@ -34,5 +35,21 @@ public interface CommandModel {
             }
         }
         return prepared.toString();
+    }
+    /**
+     * get main class from source path.
+     * @param pathURI - the path of the source files.
+     * @return the main class package name.
+     */
+    public default String getMainClass(String pathURI) {
+        String mainDeclaration = "public static void main";
+        String mainClass = getFileOperation().getFileWithLine(pathURI, mainDeclaration, 0);
+        if(!mainClass.isBlank()) {
+            return mainClass
+                .replace(getRoot() + File.separator, "")
+                .replace(".java", "")
+                .replace(File.separator, ".");
+        }
+        return "";
     }
 }
