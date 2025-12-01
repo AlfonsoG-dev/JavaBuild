@@ -3,10 +3,14 @@ package application.operations;
 import application.utils.FileUtils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -139,6 +143,32 @@ public class FileOperation {
         boolean condition = Files.getLastModifiedTime(first, LinkOption.NOFOLLOW_LINKS).compareTo(
                 Files.getLastModifiedTime(second, LinkOption.NOFOLLOW_LINKS)) > 0;
         return !Files.exists(second) || condition;
+    }
+    /**
+     * Get the files that depend on the class declare by the package name.
+     * @param pathURI - where to search for the dependent files.
+     * @param packageName - the package name of the class that other files depend on.
+     * @param fileName - the name of the file that other files depend on.
+     * @return a set list with the files that depend on the class declare by the package name.
+     */
+    public Set<String> getDependentFiles(String pathURI, String packageName, String fileName) {
+
+        List<Path> paths = getFiles(pathURI, 0);
+        if(paths.isEmpty()) return new HashSet<>();
+
+        String dirPackage = packageName.replace(fileName, "*");
+
+        Set<String> dependent = new HashSet<>();
+        for(Path p: paths) {
+
+            String[] lines = fileUtils.getFileLines(p.toString()).split("\n");
+            for(String l: lines) {
+                if(l.startsWith("import") && (l.trim().equals(packageName) || l.trim().equals(dirPackage))) {
+                    dependent.add(p.toString());
+                }
+            }
+        }
+        return dependent;
     }
 
 }
