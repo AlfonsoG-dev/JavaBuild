@@ -138,10 +138,8 @@ public class FileOperation {
      * @param second - is the .class file to find if its the same or older than the first.
      * @return true if they are different, false otherwise.
      */
-    public boolean isEqualDateOfFiles(Path first, Path second) throws IOException {
-        boolean condition = Files.getLastModifiedTime(first, LinkOption.NOFOLLOW_LINKS).compareTo(
-                Files.getLastModifiedTime(second, LinkOption.NOFOLLOW_LINKS)) > 0;
-        return !Files.exists(second) || condition;
+    public boolean isEqualDateOfFiles(Path first, Path second) {
+        return !Files.exists(second) || first.toFile().lastModified() > second.toFile().lastModified();
     }
     /**
      * Append the files that depend on the class declare by the package name.
