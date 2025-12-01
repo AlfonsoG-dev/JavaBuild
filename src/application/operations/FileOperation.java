@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.stream.Stream;
 import java.io.File;
 import java.io.IOException;
 
@@ -159,10 +159,12 @@ public class FileOperation {
 
         for(Path p: paths) {
 
-            String[] lines = fileUtils.getFileLines(p.toString()).split("\n");
-            for(String l: lines) {
-                if(l.startsWith("import") && (l.trim().equals(packageName) || l.trim().equals(dirPackage))) {
-                    dependent.add(p.toString());
+            try(Stream<String> s = fileUtils.getLazyFileLines(p.toString())) {
+                List<String> lines = s.toList();
+                for(String l: lines) {
+                    if(l.startsWith("import") && (l.trim().equals(packageName) || l.trim().equals(dirPackage))) {
+                        dependent.add(p.toString());
+                    }
                 }
             }
         }
