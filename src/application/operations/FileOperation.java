@@ -128,10 +128,17 @@ public class FileOperation {
         }
         return content;
     }
-    public boolean differDateOfFiles(Path first, Path second) throws IOException {
+    /**
+     * Find if the first file is modified after the creation of second file.
+     * <p> First file and second file correspond to a .java and .class file.
+     * @param first - is the .java file to find if its newer or equal to the second.
+     * @param second - is the .class file to find if its the same or older than the first.
+     * @return true if they are different, false otherwise.
+     */
+    public boolean isEqualDateOfFiles(Path first, Path second) throws IOException {
         boolean condition = Files.getLastModifiedTime(first, LinkOption.NOFOLLOW_LINKS).compareTo(
                 Files.getLastModifiedTime(second, LinkOption.NOFOLLOW_LINKS)) > 0;
-        return !Files.exists(first) || condition;
+        return !Files.exists(second) || condition;
     }
 
 }
