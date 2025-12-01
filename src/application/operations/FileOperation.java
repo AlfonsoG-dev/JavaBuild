@@ -139,7 +139,7 @@ public class FileOperation {
      * @return true if they are different, false otherwise.
      */
     public boolean isNewerThan(Path first, Path second) {
-        return !Files.exists(second) || first.toFile().lastModified() == second.toFile().lastModified();
+        return !Files.exists(second) || first.toFile().lastModified() > second.toFile().lastModified();
     }
     /**
      * Append the files that depend on the class declare by the package name.
