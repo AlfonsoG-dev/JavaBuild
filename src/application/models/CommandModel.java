@@ -10,6 +10,7 @@ public interface CommandModel {
     /**
      * Give the directories the format to compile only with *.java.
      * @param pathURI - the path where source files are.
+     * @return a string with the directory sources.
      */
     public default String prepareSourceDirs(String pathURI) {
         StringBuilder prepared = new StringBuilder();
@@ -23,6 +24,7 @@ public interface CommandModel {
     /**
      * List the lib .jar dependencies separated by ;.
      * @param pathURI - the path where the dependencies are.
+     * @return a string with the .jar dependencies.
      */
     public default String preparedLibFiles(String pathURI) {
         StringBuilder prepared = new StringBuilder();
