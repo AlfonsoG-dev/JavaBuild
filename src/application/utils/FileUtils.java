@@ -66,4 +66,12 @@ public class FileUtils {
         }
         return lines.toString();
     }
+    /**
+     * Get file lines with lazy loading.
+     * @param fileURI - the file to get the lines.
+     * @return a lazy load stream with the given file lines.
+     */
+    public Stream<String> getLazyFileLines(String fileURI) throws IOException {
+        return Files.lines(Paths.get(fileURI));
+    }
 }
