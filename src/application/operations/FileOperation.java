@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
 public class FileOperation {
@@ -58,7 +60,7 @@ public class FileOperation {
      * @param leve - the nested level to reach.
      * @return the path to the file where the line were founded.
      */
-    public String searchLineInPath(String pathURI, String line, int level) {
+    public String getFileWithLine(String pathURI, String line, int level) {
         List<Path> paths = this.getFiles(pathURI, level);
         for(Path p: paths) {
             String[] lines = fileUtils.getFileLines(p.toString()).split("\n");
@@ -95,11 +97,15 @@ public class FileOperation {
         String[] lines = fileUtils.getFileLines(fileURI).split("\n");
         if(lines.length == 0) {
             String mainClassLine = "public static void main";
+            String mainClass = this.getFileWithLine("src", mainClassLine, 2)
+                .replace("src" + File.separator, "")
+                .replace(File.separator, ".")
+                .replace(".java", "");
             String[][] headers = {
                     {"Root-Path:" + "src"},
                     {"Source-Path:" + "src"},
                     {"Class-Path:" + "bin"},
-                    {"Main-Class:" + this.searchLineInPath("src", mainClassLine, 2)},
+                    {"Main-Class:" + mainClass},
                     {"Test-Path:" + "src" + File.separator + "test"},
                     {"Test-Class:" + "test.TestLauncher"},
                     {"Libraries:" + "ignore"},
