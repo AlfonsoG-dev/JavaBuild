@@ -22,7 +22,19 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
     public FileOperation getFileOperation() {
         return fileOperation;
     }
+    @Override
+    public String getRoot() {
+        return root;
+    }
 
+    /**
+     * get the compile command.
+     * @param sourcePath - the path to the source files.
+     * @param classPath - the path to the class files.
+     * @param compileFlags - the flags to pass to the compile operation.
+     * @param includeLib - to include or not the lib dependencies.
+     * @return the command to compile the .java files into .class files
+     */
     @Override
     public String getCommand(String sourcePath, String classPath, String compileFlags, String includeLib) {
         StringBuilder command = new StringBuilder("javac -d \"");
@@ -44,6 +56,14 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
         command.append(sourceFiles);
         return command.toString();
     }
+    /**
+     * Get the compile command of the modified files once the class path is created.
+     * @param sourcePath - the path where the source files are.
+     * @param classPath - the path where the class files are.
+     * @param compileFlags - the compile flags to pass to the compile operation.
+     * @param includeLib - to include or not the lib dependencies.
+     * @return the recompile command.
+     */
     public String getReCompileCommand(String sourcePath, String classPath, String compileFlags, String includeLib) {
         StringBuilder command = new StringBuilder("javac -d \"");
         // append target or class-path
