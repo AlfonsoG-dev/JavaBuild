@@ -1,8 +1,11 @@
 package application.builders;
 
 import java.io.File;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,6 +83,7 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
         }
         command.append(dependent
                 .stream()
+                .sorted(Comparator.reverseOrder())
                 .collect(Collectors.joining(" "))
         );
 
