@@ -128,5 +128,10 @@ public class FileOperation {
         }
         return content;
     }
+    public boolean differDateOfFiles(Path first, Path second) throws IOException {
+        boolean condition = Files.getLastModifiedTime(first, LinkOption.NOFOLLOW_LINKS).compareTo(
+                Files.getLastModifiedTime(second, LinkOption.NOFOLLOW_LINKS)) > 0;
+        return !Files.exists(first) || condition;
+    }
 
 }
