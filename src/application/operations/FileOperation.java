@@ -8,10 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.io.File;
-import java.io.IOException;
 
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
 public class FileOperation {
@@ -155,15 +153,13 @@ public class FileOperation {
         String dirPackage = packageName.replace(fileName, "*");
 
         for(Path p: paths) {
-
-            try(Stream<String> s = fileUtils.getLazyFileLines(p.toString())) {
-                List<String> lines = s.toList();
-                for(String l: lines) {
-                    if(l.startsWith("import") && (l.trim().equals(packageName) || l.trim().equals(dirPackage))) {
-                        dependent.add(p.toString());
-                    }
+            String[] lines = fileUtils.getFileLines(p.toString()).split("\n");
+            for(String l: lines) {
+                if(l.startsWith("import") && (l.trim().equals(packageName) || l.trim().equals(dirPackage))) {
+                    dependent.add(p.toString());
                 }
             }
+
         }
     }
 
