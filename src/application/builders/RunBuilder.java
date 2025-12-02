@@ -29,8 +29,6 @@ public record RunBuilder(String root, FileOperation fileOperation) implements Co
     public String getCommand(String sourcePath, String classPath, String flags, String includeLib) {
         StringBuilder command = new StringBuilder("java");
 
-        if(!flags.isBlank()) command.append(String.format(" %s", flags));
-
         // append class path
         if(classPath.isBlank()) return "";
         command.append(String.format(" -cp '%s", classPath));
@@ -43,6 +41,9 @@ public record RunBuilder(String root, FileOperation fileOperation) implements Co
 
         // append main class.
         command.append(getMainClass(sourcePath));
+
+        // append flags to run.
+        if(!flags.isBlank()) command.append(String.format(" %s", flags));
 
         return command.toString();
     }
@@ -59,8 +60,6 @@ public record RunBuilder(String root, FileOperation fileOperation) implements Co
     public String getCommand(String sourcePath, String classPath, String mainClass, String flags, String includeLib) {
         StringBuilder command = new StringBuilder("java");
 
-        if(!flags.isBlank()) command.append(String.format(" %s", flags));
-
         // append class path
         if(classPath.isBlank()) return "";
         command.append(String.format(" -cp '%s", classPath));
@@ -74,6 +73,8 @@ public record RunBuilder(String root, FileOperation fileOperation) implements Co
         // append main class.
         if(mainClass.isBlank()) command.append(getMainClass(sourcePath));
         command.append(mainClass);
+
+        if(!flags.isBlank()) command.append(String.format(" %s", flags));
 
         return command.toString();
 

@@ -14,7 +14,9 @@ public class Operation {
 
     private String oSourcePath;
     private String oClassPath;
+    private String oMainClass;
     private String oIncludeLib;
+    private String oCompileFlags;
 
     public Operation(String[] args) {
         this.args = args;
@@ -40,9 +42,13 @@ public class Operation {
         String includeLib = getPrefixValue("--i");
 
         config = fileOperation.getConfigValues(Optional.ofNullable(configURI).orElse("config.txt"));
+
         oSourcePath = Optional.ofNullable(sourcePath).orElse(config.get("Source-Path"));
         oClassPath = Optional.ofNullable(classPath).orElse(config.get("Class-Path"));
         oIncludeLib = Optional.ofNullable(includeLib).orElse(config.get("Libraries"));
+        oMainClass = config.get("Main-Class");
+        oCompileFlags = config.get("Compile-Flags");
+
         compileBuilder = new CompileBuilder(config.get("Root-Path"), fileOperation);
     }
     /**
@@ -57,14 +63,45 @@ public class Operation {
         File classPath = new File(oClassPath);
         if(!classPath.exists()) {
             command = compileBuilder.getCommand(
-                    oSourcePath, oClassPath,
-                    Optional.ofNullable(flags).orElse(config.get("Compile-Flags")), oIncludeLib
+                    oSourcePath,
+                    oClassPath,
+                    Optional.ofNullable(flags).orElse(oCompileFlags),
+                    oIncludeLib
             );
         } else {
             command = compileBuilder.getReCompileCommand(
-                    oSourcePath, oClassPath,
-                    Optional.ofNullable(flags).orElse(config.get("Compile-Flags")), oIncludeLib
+                    oSourcePath,
+                    oClassPath,
+                    Optional.ofNullable(flags).orElse(oCompileFlags),
+                    oIncludeLib
             );
+        }
+        System.console().printf("[Command] %s", command);
+    }
+    public void runOperation() {
+        String root = config.get("Root-Path");
+
+        String flags = getPrefixValue("-f");
+        String entry = getPrefixValue("-e");
+
+        String command = "";
+        if(entry == null) {
+            command = new RunBuilder(root, fileOperation)
+                .getCommand(
+                        oSourcePath,
+                        oClassPath,
+                        Optional.ofNullable(flags).orElse(""),
+                        oIncludeLib
+                );
+        } else {
+            command = new RunBuilder(root, fileOperation)
+                .getCommand(
+                        oSourcePath,
+                        oClassPath,
+                        entry,
+                        Optional.ofNullable(flags).orElse(""),
+                        oIncludeLib
+                );
         }
         System.console().printf("[Command] %s", command);
     }
