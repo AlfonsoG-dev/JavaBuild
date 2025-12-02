@@ -124,6 +124,10 @@ public class Operation {
         );
         System.console().printf(COMMAND_OUTPUT_FORMAT, command);
     }
+    /**
+     * Remove the class path of the project in order to compile from scratch.
+     * <p> the compile operation should use all the possible paths if class paths doesn't exists.
+     */
     public void removeOperation() {
         String removeClassPath = "rm -r " + oClassPath;
         System.console().printf(COMMAND_OUTPUT_FORMAT, removeClassPath);
