@@ -6,9 +6,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Operation {
+    private static final String COMMAND_OUTPUT_FORMAT = "[Command] %s";
+
+
     private String[] args;
     private FileOperation fileOperation;
-    private Map<String, String> config;
 
     private CompileBuilder compileBuilder;
 
@@ -16,6 +18,7 @@ public class Operation {
     private String oClassPath;
     private String oIncludeLib;
     private String oCompileFlags;
+    private String root;
 
     public Operation(String[] args) {
         this.args = args;
@@ -40,12 +43,13 @@ public class Operation {
         String classPath = getPrefixValue("-cp");
         String includeLib = getPrefixValue("--i");
 
-        config = fileOperation.getConfigValues(Optional.ofNullable(configURI).orElse("config.txt"));
+        Map<String, String> config = fileOperation.getConfigValues(Optional.ofNullable(configURI).orElse("config.txt"));
 
         oSourcePath = Optional.ofNullable(sourcePath).orElse(config.get("Source-Path"));
         oClassPath = Optional.ofNullable(classPath).orElse(config.get("Class-Path"));
         oIncludeLib = Optional.ofNullable(includeLib).orElse(config.get("Libraries"));
         oCompileFlags = config.get("Compile-Flags");
+        root = config.get("Root-Path");
 
         compileBuilder = new CompileBuilder(config.get("Root-Path"), fileOperation);
     }
@@ -74,14 +78,13 @@ public class Operation {
                     oIncludeLib
             );
         }
-        System.console().printf("[Command] %s", command);
+        System.console().printf(COMMAND_OUTPUT_FORMAT, command);
     }
     /**
      * Get command to run the project using a main class entry.
      * <p> the main class entry is set by the configuration file or use -e.
      */
     public void runOperation() {
-        String root = config.get("Root-Path");
 
         String entry = getPrefixValue("-e");
 
@@ -104,7 +107,22 @@ public class Operation {
                         oIncludeLib
                 );
         }
-        System.console().printf("[Command] %s", command);
+        System.console().printf(COMMAND_OUTPUT_FORMAT, command);
+    }
+    /**
+     * Get the command to create the project .jar file.
+     * <p> using manifesto file to get the entry point and lib dependencies when they are not included in the build.
+     * <p> using main class package name as the entry point.
+     */
+    public void createJarOperation() {
+        String flags = getPrefixValue("-f");
+        String command = new JarBuilder(root, fileOperation).getCommand(
+                oSourcePath,
+                oClassPath,
+                Optional.ofNullable(flags).orElse(""),
+                oIncludeLib
+        );
+        System.console().printf(COMMAND_OUTPUT_FORMAT, command);
     }
     /**
      * Get the command line value of a certain prefix.
