@@ -27,9 +27,9 @@ public record RunBuilder(String root, FileOperation fileOperation) implements Co
      */
     @Override
     public String getCommand(String sourcePath, String classPath, String flags, String includeLib) {
-        StringBuilder command = new StringBuilder("java ");
+        StringBuilder command = new StringBuilder("java");
 
-        if(!flags.isBlank()) command.append(flags);
+        if(!flags.isBlank()) command.append(String.format(" %s", flags));
 
         // append class path
         if(classPath.isBlank()) return "";
@@ -57,9 +57,9 @@ public record RunBuilder(String root, FileOperation fileOperation) implements Co
      * @return the command.
      */
     public String getCommand(String sourcePath, String classPath, String mainClass, String flags, String includeLib) {
-        StringBuilder command = new StringBuilder("java ");
+        StringBuilder command = new StringBuilder("java");
 
-        if(!flags.isBlank()) command.append(flags);
+        if(!flags.isBlank()) command.append(String.format(" %s", flags));
 
         // append class path
         if(classPath.isBlank()) return "";
