@@ -44,7 +44,7 @@ public interface CommandModel {
      */
     public default String getMainClass(String pathURI) {
         String mainDeclaration = "public static void main";
-        String mainClass = getFileOperation().getFileWithLine(pathURI, mainDeclaration, 0);
+        String mainClass = getFileOperation().getFileWithLine(pathURI, mainDeclaration, 2);
         if(!mainClass.isBlank()) {
             return mainClass
                 .replace(getRoot() + File.separator, "")
