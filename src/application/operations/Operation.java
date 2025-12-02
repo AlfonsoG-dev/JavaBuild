@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class Operation {
-    private static final String COMMAND_OUTPUT_FORMAT = "[Command] %s";
+    private static final String COMMAND_OUTPUT_FORMAT = "[Command] %s%n";
 
 
     private String[] args;
@@ -123,6 +123,10 @@ public class Operation {
                 oIncludeLib
         );
         System.console().printf(COMMAND_OUTPUT_FORMAT, command);
+    }
+    public void removeOperation() {
+        String removeClassPath = "rm -r " + oClassPath;
+        System.console().printf(COMMAND_OUTPUT_FORMAT, removeClassPath);
     }
     /**
      * Get the command line value of a certain prefix.
