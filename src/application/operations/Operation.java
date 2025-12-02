@@ -25,6 +25,14 @@ public class Operation {
         this.fileOperation = fileOperation;
     }
 
+    /**
+     * Initialize the environment variables.
+     * <p> configuration with the command line values.
+     * <p> use -c to change the configuration file.
+     * <p> use -s to change the source path.
+     * <p> use -cp to change the class path.
+     * <p> use --i to include/exclude/ignore the lib dependencies.
+     */
     public void startUpConfig() {
         String configURI = getPrefixValue("-c");
         String sourcePath = getPrefixValue("-s");
@@ -37,6 +45,11 @@ public class Operation {
         oIncludeLib = Optional.ofNullable(includeLib).orElse(config.get("Libraries"));
         compileBuilder = new CompileBuilder(config.get("Root-Path"), fileOperation);
     }
+    /**
+     * Command operation to compile the project.
+     * <p> Use the re-compile command when class path is already created.
+     * <p> Use -f to pass one compile flag like -Xlint:all.
+     */
     public void compileOperation() {
         // For now only 1 argument flags is allowed.
         String flags = getPrefixValue("-f");
@@ -48,7 +61,13 @@ public class Operation {
         );
         System.console().printf("[Command] %s", command);
     }
-
+    /**
+     * Get the command line value of a certain prefix.
+     * <p> the value is place after the prefix.
+     * <p> if no value is provided it returns null.
+     * @param prefix - the prefix to search its value.
+     * @return the value or null if non is present.
+     */
     protected String getPrefixValue(String prefix) {
         for(int i=0; i<args.length; ++i) {
             if(args[i].equals(prefix) && (i+1) < args.length) {
@@ -57,6 +76,13 @@ public class Operation {
         }
         return null;
     }
+    /**
+     * Get the command line prefix index.
+     * <p> the index is the coordinate of the prefix.
+     * <p> if no prefix is present returns -1.
+     * @param prefix - the prefix to search its index value.
+     * @return the index or -1 if non is present.
+     */
     protected int getPrefixIndex(String prefix) {
         for(int i=0; i<args.length; ++i) {
             if(args[i].equals(prefix)) {
