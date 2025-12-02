@@ -14,7 +14,6 @@ public class Operation {
 
     private String oSourcePath;
     private String oClassPath;
-    private String oMainClass;
     private String oIncludeLib;
     private String oCompileFlags;
 
@@ -46,7 +45,6 @@ public class Operation {
         oSourcePath = Optional.ofNullable(sourcePath).orElse(config.get("Source-Path"));
         oClassPath = Optional.ofNullable(classPath).orElse(config.get("Class-Path"));
         oIncludeLib = Optional.ofNullable(includeLib).orElse(config.get("Libraries"));
-        oMainClass = config.get("Main-Class");
         oCompileFlags = config.get("Compile-Flags");
 
         compileBuilder = new CompileBuilder(config.get("Root-Path"), fileOperation);
