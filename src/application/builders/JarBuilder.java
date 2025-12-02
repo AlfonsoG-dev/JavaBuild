@@ -5,13 +5,6 @@ import application.models.CommandModel;
 
 
 import java.io.File;
-
-import java.nio.file.Path;
-
-import java.util.List;
-
-
-
 public record JarBuilder(String root, FileOperation fileOperation)  implements CommandModel {
     private static final String DEFAULT_EXTRACT_PATH = "extractionFiles";
     private static final String DEFAULT_LIB_PATH = "lib";
@@ -26,6 +19,14 @@ public record JarBuilder(String root, FileOperation fileOperation)  implements C
         return root;
     }
 
+    /**
+     * Get the command to create .jar files.
+     * @param sourcePath - the path where the source files are.
+     * @param classPath - the path where the class files are.
+     * @param flags - the .jar command flags.
+     * @param includeLib - to include or not the lib dependencies.
+     * @return the command.
+     */
     @Override
     public String getCommand(String sourcePath, String classPath, String flags, String includeLib) {
         StringBuilder command = new StringBuilder("jar -c");
@@ -66,8 +67,15 @@ public record JarBuilder(String root, FileOperation fileOperation)  implements C
 
         return command.toString();
     }
+    /**
+     * Append the corresponding format for the .jar build.
+     * <p> append m when there is a manifesto file present.
+     * <p> append e when no manifesto file is present and the project has a main class.
+     * <p> if non of those are present append and empty string.
+     * @return the .jar format.
+     */
     public String getJarAssetFormat(StringBuilder command, String sourcePath) {
-        String name = "";
+        String name = " ";
         if(haveManifesto()) {
             name = "m ";
         } else if(!getMainClass(sourcePath).isBlank()) {
