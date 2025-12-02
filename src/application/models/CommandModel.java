@@ -67,4 +67,11 @@ public interface CommandModel {
         }
         return "";
     }
+    /**
+     * search for the manifesto file.
+     * @return true if exists, false otherwise.
+     */
+    public default boolean haveManifesto() {
+        return getFileOperation().fileIsPresent(".", "Manifesto.txt", 1);
+    }
 }
