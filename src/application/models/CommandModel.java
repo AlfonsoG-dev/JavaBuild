@@ -1,5 +1,6 @@
 package application.models;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import application.operations.FileOperation;
@@ -49,6 +50,20 @@ public interface CommandModel {
                 .replace(getRoot() + File.separator, "")
                 .replace(".java", "")
                 .replace(File.separator, ".");
+        }
+        return "";
+    }
+    /**
+     * Get the project name to use as a replace for file name where its needed.
+     * <p> The project name also is the same name of the main class.
+     * @return the project name, or empty string.
+     */
+    public default String getProjectName() {
+        try {
+            File f = new File(".");
+            return new File(f.getCanonicalPath()).getName();
+        } catch(IOException e) {
+            e.printStackTrace();
         }
         return "";
     }
