@@ -1,7 +1,7 @@
 package application.operations;
 
 import application.builders.*;
-
+import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,12 +53,19 @@ public class Operation {
     public void compileOperation() {
         // For now only 1 argument flags is allowed.
         String flags = getPrefixValue("-f");
-        String command = compileBuilder.getCommand(
-                oSourcePath,
-                oClassPath,
-                Optional.ofNullable(flags).orElse(config.get("Compile-Flags")),
-                oIncludeLib
-        );
+        String command = "";
+        File classPath = new File(oClassPath);
+        if(!classPath.exists()) {
+            command = compileBuilder.getCommand(
+                    oSourcePath, oClassPath,
+                    Optional.ofNullable(flags).orElse(config.get("Compile-Flags")), oIncludeLib
+            );
+        } else {
+            command = compileBuilder.getReCompileCommand(
+                    oSourcePath, oClassPath,
+                    Optional.ofNullable(flags).orElse(config.get("Compile-Flags")), oIncludeLib
+            );
+        }
         System.console().printf("[Command] %s", command);
     }
     /**
