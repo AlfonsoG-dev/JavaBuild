@@ -21,7 +21,7 @@ public class FileUtils {
      */
     public int countFiles(String pathURI) {
         File f = new File(pathURI);
-        if(!f.exists() || f.listFiles() == null) return 0;
+        if(!f.exists() || f.listFiles().length == 0) return 0;
         int n = 0;
         for(File mf: f.listFiles()) {
             if(mf.isFile()) {
