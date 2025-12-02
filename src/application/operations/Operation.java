@@ -78,10 +78,13 @@ public class Operation {
         }
         System.console().printf("[Command] %s", command);
     }
+    /**
+     * Get command to run the project using a main class entry.
+     * <p> the main class entry is set by the configuration file or use -e.
+     */
     public void runOperation() {
         String root = config.get("Root-Path");
 
-        String flags = getPrefixValue("-f");
         String entry = getPrefixValue("-e");
 
         String command = "";
@@ -90,7 +93,7 @@ public class Operation {
                 .getCommand(
                         oSourcePath,
                         oClassPath,
-                        Optional.ofNullable(flags).orElse(""),
+                        "",
                         oIncludeLib
                 );
         } else {
@@ -99,7 +102,7 @@ public class Operation {
                         oSourcePath,
                         oClassPath,
                         entry,
-                        Optional.ofNullable(flags).orElse(""),
+                        "",
                         oIncludeLib
                 );
         }

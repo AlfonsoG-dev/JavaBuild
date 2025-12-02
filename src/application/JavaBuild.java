@@ -11,6 +11,9 @@ class JavaBuild {
                 case "--compile":
                     op.compileOperation();
                     break;
+                case "--run":
+                    op.runOperation();
+                    break;
                 case "--h":
                     System.console().printf("%s%n", "Use --h for help");
                     break;
