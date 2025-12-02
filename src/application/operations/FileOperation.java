@@ -155,7 +155,7 @@ public class FileOperation {
             String[] lines = fileUtils.getFileLines(p.toString()).split("\n");
             for(String l: lines) {
                 if(l.startsWith("import") && (l.trim().equals(packageName) || l.trim().equals(dirPackage))) {
-                    dependent.add(p.toString());
+                    dependent.add(String.format("\"%s\"", p.normalize().toString()));
                 }
             }
 
