@@ -54,12 +54,14 @@ public record JarBuilder(String root, FileOperation fileOperation)  implements C
         // append lib dependencies
         if(includeLib.equals("include")) {
             File[] extractFiles = new File(DEFAULT_EXTRACT_PATH).listFiles();
+            if(extractFiles == null || extractFiles.length == 0) return command.toString();
+
             String[] libFiles = preparedLibFiles(DEFAULT_LIB_PATH).split(";");
             if(libFiles.length == 0) return command.toString();
-            if(extractFiles != null && extractFiles.length < libFiles.length) {
+
+            if(extractFiles.length < libFiles.length) {
                 System.console().printf("[Warning] %s%n", "You have lib dependencies pending extraction.");
             }
-            if(extractFiles == null) return command.toString();
             for(File f: extractFiles) {
                 command.append(String.format(" -C %s%s . ", f.toPath().normalize().toString(), File.separator));
             }
