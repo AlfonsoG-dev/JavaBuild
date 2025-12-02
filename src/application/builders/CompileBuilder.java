@@ -101,6 +101,7 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
                 );
             }
         }
+        if(dependent.isEmpty()) return "";
         command.append(dependent
                 .stream()
                 .sorted(Comparator.reverseOrder())
