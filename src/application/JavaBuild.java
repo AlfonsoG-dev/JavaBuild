@@ -17,6 +17,11 @@ class JavaBuild {
                 case "--jar":
                     op.createJarOperation();
                     break;
+                case "--build":
+                    op.removeOperation();
+                    op.compileOperation();
+                    op.createJarOperation();
+                    break;
                 case "--h":
                     System.console().printf("%s%n", "Use --h for help");
                     break;
