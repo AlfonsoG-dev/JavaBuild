@@ -90,7 +90,7 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
                 .replace(FILE_EXTENSION, ".class");
             Path second = Paths.get(comparator);
             if(fileOperation().isNewerThan(p, second)) {
-                dependent.add(p.toString());
+                dependent.add(String.format("\"%s\"", p.normalize().toString()));
                 String packageName = "import " + p.normalize().toString()
                     .replace(root + File.separator, "")
                     .replace(File.separator, ".")
