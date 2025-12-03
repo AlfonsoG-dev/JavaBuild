@@ -73,12 +73,10 @@ public class CommandUtils {
     }
     private boolean isHelpCommand() {
         for(int i=0; i<args.length; ++i) {
-            if((i+1) < args.length) {
-                String cm = args[i+1];
-                return (
-                        cm.equals("--h") || cm.equals("-h") || cm.equals("?") ||
-                        cm.equals("--help") || cm.equals("-help") || cm.equals("help")
-                );
+            String cm = args[i];
+            if(cm.equals("--h") || cm.equals("-h") || cm.equals("?") ||
+                    cm.equals("--help") || cm.equals("-help") || cm.equals("help")) {
+                return true;
             }
         }
         return false;
