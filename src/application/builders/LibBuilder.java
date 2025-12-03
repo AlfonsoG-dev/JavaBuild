@@ -48,6 +48,7 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
 
         // extract .jar files.
         for(File f: extractFiles) {
+            // TODO: don't append the files that are already extracted.
             command.append(String.format("cd %s && ", f.toPath().normalize().toString()));
             // FIXME: validate that the file and its parent share the same name.
             // assuming that the .jar file has the same name as its parent folder.
