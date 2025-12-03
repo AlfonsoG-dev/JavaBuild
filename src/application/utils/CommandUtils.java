@@ -33,6 +33,24 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
+    public boolean showhelpOnRun() {
+        String prefix = "--run";
+        String runValue = getPrefixValue(prefix);
+        if(!runValue.equals("--h")) return false;
+
+        StringBuilder help = new StringBuilder();
+
+        help.append(String.format("Use [%s] to run the project.%n", prefix));
+        help.append(String.format("\tIf you want to use other main class: %n", ""));
+        help.append(String.format("\t => Use [%s -e pacakage.App] to run other main class.%n", prefix));
+        help.append(String.format("\tOnly one main class is allowed so: %n", ""));
+        help.append(String.format("\t => This [%s -e app other.App] will only get the first argument app.%n", prefix));
+        help.append(String.format("\tThis behavior might change in other version: %n", ""));
+        help.append(String.format("\t => This [%s] will only run the project using the class path files.%n", prefix));
+
+        console.printf(CONSOLE_FORMAT, help.toString());
+        return true;
+    }
 
     private String getPrefixValue(String prefix) {
         for(int i=0; i<args.length; ++i) {
