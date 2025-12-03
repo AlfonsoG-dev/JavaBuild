@@ -1,6 +1,8 @@
 package application.operations;
 
 import application.builders.*;
+import application.utils.CommandUtils;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Optional;
@@ -11,6 +13,8 @@ public class Operation {
 
     private String[] args;
     private FileOperation fileOperation;
+
+    private CommandUtils commandUtils;
 
     private CompileBuilder compileBuilder;
 
@@ -23,10 +27,12 @@ public class Operation {
     public Operation(String[] args) {
         this.args = args;
         fileOperation = new FileOperation();
+        commandUtils = new CommandUtils(args);
     }
     public Operation(String[] args, FileOperation fileOperation) {
         this.args = args;
         this.fileOperation = fileOperation;
+        commandUtils = new CommandUtils(args);
     }
 
     /**
@@ -59,6 +65,7 @@ public class Operation {
      * <p> Use -f to pass one compile flag like -Xlint:all.
      */
     public void compileOperation() {
+        if(commandUtils.showHelpOnCompile()) return;
         // For now only 1 argument flags is allowed.
         String flags = getPrefixValue("-f");
         String command = "";
