@@ -73,6 +73,16 @@ public class FileOperation {
         return "";
     }
     /**
+     * Wrapper method to write lines to a file.
+     * @param fileURI - the file to write the lines.
+     * @param lines - the lines to write.
+     */
+    public void writeLines(String fileURI, String lines) {
+        if(fileUtils.writeLinesToFile(fileURI, lines)) {
+            System.console().printf("[Info] Lines were written to %s", fileUtils);
+        }
+    }
+    /**
      * Search for the existence of a file in a given path.
      * @param pathURI - path to search for the file.
      * @param fileName - the file to search for its existence.
