@@ -51,8 +51,29 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
+    public boolean showHelpoOnCreateJar() {
+        String prefix = "--jar";
+        if(!isHelpCommand()) return false;
 
-    private String getPrefixValue(String prefix) {
+        StringBuilder help = new StringBuilder();
+
+        help.append(String.format("Use [%s] to create the .jar file of the project.%n", prefix));
+        help.append(String.format("\tIf you have dependencies include/exclude/ignore them by changing you configuration file on: %n", ""));
+        help.append(String.format("\t => Libraries: include/exclude/ignore%n", ""));
+        help.append(String.format("\tOnly one option is allowed.%n", ""));
+        help.append(String.format("\tIf you want to include the dependencies in your .jar file use include.%n", ""));
+        help.append(String.format("\tIf you don't want to include the dependencies in your .jar file use exclude.%n", ""));
+        help.append(String.format("\tIf you don't want to use in any of the command the dependencies use ignore.%n", ""));
+        help.append(String.format("%n\tYou can change the directory where the dependencies are: %n", ""));
+        help.append(String.format("\t => Use [%s --l dependency-path] to change the dependency path.%n", prefix));
+        help.append(String.format("\tYou can change the directory where the dependencies are extracted: %n", ""));
+        help.append(String.format("\t => Use [%s --ex extract-path] to change the extraction path.%n", prefix));
+        help.append(String.format("%n\tYou can pass a jar command flags: %n", ""));
+        help.append(String.format("\t => Use [%s -f v] to append the v flag in the jar command.%n", prefix));
+
+        console.printf(CONSOLE_FORMAT, help.toString());
+        return true;
+    }
         for(int i=0; i<args.length; ++i) {
             if(args[i].equals(prefix) && (i+1) < args.length) {
                 return args[i+1];
