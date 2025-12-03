@@ -131,28 +131,8 @@ public class FileOperation {
         Map<String, String> content = new HashMap<>();
 
         String[] lines = fileUtils.getFileLines(fileURI).split("\n");
-        if(lines.length == 0) {
-            String mainClassLine = "public static void main";
-            String mainClass = this.getFileWithLine("src", mainClassLine, 2)
-                .replace("src" + File.separator, "")
-                .replace(File.separator, ".")
-                .replace(".java", "");
-            String[][] headers = {
-                    {"Root-Path:" + "src"},
-                    {"Source-Path:" + "src"},
-                    {"Class-Path:" + "bin"},
-                    {"Main-Class:" + mainClass},
-                    {"Test-Path:" + "src" + File.separator + "test"},
-                    {"Test-Class:" + "test.TestLauncher"},
-                    {"Libraries:" + "ignore"},
-                    {"Compile-Flags:" + "-Werror"}
-            };
-            for(int i=0; i<headers.length; ++i) {
-                for(int j=i; j<headers.length; ++j) {
-                    content.put(headers[i][0], headers[i][j]);
-                }
-            }
-        }
+        if(lines.length == 0) lines = getDefaultConfiguration().split("\n");
+
         for(String l: lines) {
             String[] options = l.split(":", 2);
             String k = options[0].trim();
