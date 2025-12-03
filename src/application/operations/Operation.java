@@ -113,16 +113,31 @@ public class Operation {
      * Get the command to create the project .jar file.
      * <p> using manifesto file to get the entry point and lib dependencies when they are not included in the build.
      * <p> using main class package name as the entry point.
+     * <p> If there are lib dependencies and you have include in your config, they will be copied and extracted to include them in the build process.
      */
     public void createJarOperation() {
         String flags = getPrefixValue("-f");
-        String command = new JarBuilder(root, fileOperation).getCommand(
+        String jarCommand = new JarBuilder(root, fileOperation).getCommand(
                 oSourcePath,
                 oClassPath,
                 Optional.ofNullable(flags).orElse(""),
                 oIncludeLib
         );
-        System.console().printf(COMMAND_OUTPUT_FORMAT, command);
+        System.console().printf(COMMAND_OUTPUT_FORMAT, jarCommand);
+
+        // append jar extraction
+        String libPath = getPrefixValue("--l");
+        String extractPath = getPrefixValue("--e");
+        String libCommand = new LibBuilder(root, fileOperation).getCommand(
+                Optional.ofNullable(libPath).orElse("lib"),
+                Optional.ofNullable(extractPath).orElse("extractionFiles"),
+                "",
+                oIncludeLib
+
+        );
+        if(!libCommand.isBlank()) {
+            System.console().printf(COMMAND_OUTPUT_FORMAT, libCommand);
+        }
     }
     /**
      * Remove the class path of the project in order to compile from scratch.
