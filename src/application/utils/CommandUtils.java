@@ -33,7 +33,7 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
-    public boolean showhelpOnRun() {
+    public boolean showHelpOnRun() {
         String prefix = "--run";
         String runValue = getPrefixValue(prefix);
         if(!runValue.equals("--h")) return false;

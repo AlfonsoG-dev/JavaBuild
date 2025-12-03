@@ -93,7 +93,7 @@ public class Operation {
      */
     public void runOperation() {
 
-        if(commandUtils.showhelpOnRun()) return;
+        if(commandUtils.showHelpOnRun()) return;
 
         String entry = getPrefixValue("-e");
 
