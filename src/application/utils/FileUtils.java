@@ -3,6 +3,7 @@ package application.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -65,6 +66,21 @@ public class FileUtils {
             e.printStackTrace();
         }
         return lines.toString();
+    }
+    /**
+     * Write lines to a file.
+     * <p> If the file doesn't exists it will be created.
+     * <p> by default the lines will replace the existing content.
+     * @param fileURI - the file to write the lines.
+     * @param lines - the lines to write or replace.
+     */
+    public void writeLinesToFile(String fileURI, String lines) {
+        if(lines.isBlank()) return;
+        try (FileWriter writer = new FileWriter(new File(fileURI), false)) {
+            writer.write(lines);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     /**
      * Get file lines with lazy loading.
