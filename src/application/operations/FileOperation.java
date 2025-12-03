@@ -13,6 +13,17 @@ import java.nio.file.Path;
 
 public class FileOperation {
 
+    protected static final String[][] DEFAULT_CONFIG_VALUES = {
+        {"Root-Path:" + "src"},
+        {"Source-Path:" + "src"},
+        {"Class-Path:" + "bin"},
+        {"Main-Class:" + "App"},
+        {"Test-Path:" + "src" + File.separator + "test"},
+        {"Test-Class:" + "test.TestLauncher"},
+        {"Libraries:" + "ignore"},
+        {"Compile-Flags:" + "-Werror"}
+    };
+
     private FileUtils fileUtils;
 
     public FileOperation() {
@@ -98,12 +109,27 @@ public class FileOperation {
         return false;
     }
     /**
+     * Get the configuration default values.
+     * @return a string with the default values separated by \n.
+     */
+    public String getDefaultConfiguration() {
+        String lines = "";
+        String[][] headers = DEFAULT_CONFIG_VALUES;
+        for(int i=0; i<headers.length; ++i) {
+            for(int j=i; j<headers.length; ++j) {
+                lines = String.format("%s:%s%n", headers[i][0].trim(), headers[i][j].trim());
+            }
+        }
+        return lines;
+    }
+    /**
      * Get the configuration values from a file.
      * @param fileURI - the configuration file to read the values.
      * @return a map with the key, value relation of the configuration file.
      */
     public Map<String, String> getConfigValues(String fileURI) {
         Map<String, String> content = new HashMap<>();
+
         String[] lines = fileUtils.getFileLines(fileURI).split("\n");
         if(lines.length == 0) {
             String mainClassLine = "public static void main";
