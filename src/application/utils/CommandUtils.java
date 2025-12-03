@@ -17,8 +17,7 @@ public class CommandUtils {
      */
     public boolean showHelpOnCompile() {
         String prefix = "--compile";
-        String compileValue = getPrefixValue(prefix);
-        if(!compileValue.equals("--h")) return false;
+        if(!isHelpCommand()) return false;
         StringBuilder help = new StringBuilder();
 
         help.append(String.format("Use [%s] to compile the project.%n", prefix));
@@ -35,8 +34,7 @@ public class CommandUtils {
     }
     public boolean showHelpOnRun() {
         String prefix = "--run";
-        String runValue = getPrefixValue(prefix);
-        if(!runValue.equals("--h")) return false;
+        if(!isHelpCommand()) return false;
 
         StringBuilder help = new StringBuilder();
 
@@ -45,7 +43,6 @@ public class CommandUtils {
         help.append(String.format("\t => Use [%s -e pacakage.App] to run other main class.%n", prefix));
         help.append(String.format("\tOnly one main class is allowed so: %n", ""));
         help.append(String.format("\t => This [%s -e app other.App] will only get the first argument app.%n", prefix));
-        help.append(String.format("\tThis behavior might change in other version: %n", ""));
         help.append(String.format("\t => This [%s] will only run the project using the class path files.%n", prefix));
 
         console.printf(CONSOLE_FORMAT, help.toString());
@@ -74,12 +71,17 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
+    private boolean isHelpCommand() {
         for(int i=0; i<args.length; ++i) {
-            if(args[i].equals(prefix) && (i+1) < args.length) {
-                return args[i+1];
+            if((i+1) < args.length) {
+                String cm = args[i+1];
+                return (
+                        cm.equals("--h") || cm.equals("-h") || cm.equals("?") ||
+                        cm.equals("--help") || cm.equals("-help") || cm.equals("help")
+                );
             }
         }
-        return "";
+        return false;
     }
 
 }
