@@ -71,6 +71,10 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
+    /**
+     * Get if any of the help forms of command are present.
+     * @return true if its present, false otherwise.
+     */
     private boolean isHelpCommand() {
         for(int i=0; i<args.length; ++i) {
             String cm = args[i];
