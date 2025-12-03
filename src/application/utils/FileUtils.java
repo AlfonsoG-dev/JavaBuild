@@ -73,14 +73,17 @@ public class FileUtils {
      * <p> by default the lines will replace the existing content.
      * @param fileURI - the file to write the lines.
      * @param lines - the lines to write or replace.
+     * @return true if the lines were written, false otherwise.
      */
-    public void writeLinesToFile(String fileURI, String lines) {
-        if(lines.isBlank()) return;
+    public boolean writeLinesToFile(String fileURI, String lines) {
+        if(lines.isBlank()) return false;
         try (FileWriter writer = new FileWriter(new File(fileURI), false)) {
             writer.write(lines);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
     /**
      * Get file lines with lazy loading.
