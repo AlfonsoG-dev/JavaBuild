@@ -30,6 +30,9 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
         // TODO: test this.
         if(!includeLib.equals("include")) return "";
         StringBuilder command = new StringBuilder();
+        if(!flags.isBlank()) {
+            command.append("");
+        }
 
         String[] libFiles = preparedLibFiles(sourcePath).split(";");
         if(libFiles.length == 0) return "";
