@@ -9,6 +9,7 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -48,6 +49,27 @@ public class FileUtils {
             e.printStackTrace();
         }
         return content;
+    }
+    /**
+     * Copy a file into a target destination.
+     * <p> Additional validation of file and directory is needed. 
+     * <p> You can't copy a directory into the target, only files allowed.
+     * <p> The same with the target, it must be a directory.
+     * @param fileURI - the file to copy.
+     * @param targetURI - the destination to place the file.
+     * @return true if its copied, false otherwise.
+     */
+    public boolean copyFile(String fileURI, String targetURI) {
+        try {
+            Path destination = Paths.get(targetURI).resolve(Paths.get(fileURI)).normalize();
+            Path destinationParent = destination.getParent();
+            if(destinationParent != null && Files.createDirectories(destinationParent) != null) {
+                return Files.copy(Paths.get(fileURI), destinationParent, StandardCopyOption.COPY_ATTRIBUTES) != null;
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     /**
      * Create a string with the file lines of the given file path.
