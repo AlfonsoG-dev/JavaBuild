@@ -169,7 +169,6 @@ public class Operation {
         String prefix = "--add";
         String dependency = getPrefixValue(prefix);
         if(dependency == null) {
-            System.console().printf("[Error] No value for prefix | %s | was given%n", prefix);
             return;
         }
         String target = getPrefixValue("--d");

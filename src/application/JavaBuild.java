@@ -22,7 +22,7 @@ class JavaBuild {
                     op.compileOperation();
                     op.createJarOperation();
                     break;
-                case "--ad":
+                case "--add":
                     op.addDependency();
                     break;
                 case "--h":

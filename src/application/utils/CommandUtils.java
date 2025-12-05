@@ -72,19 +72,19 @@ public class CommandUtils {
         return true;
     }
     public boolean showHelpOnAddDependecy() {
-        String prefix = "--add";
         if(!isHelpCommand()) return false;
 
         StringBuilder help = new StringBuilder();
 
+        String prefix = "--add";
         help.append(String.format("Use [%s jar-file-path] to add a .jar dependency to the project.%n", prefix));
-        help.append(String.format("\tIf you want to choose where to store the dependencies:%n", ""));
-        help.append(String.format("\t => Use [%s --d dependency-path].%n", prefix));
-        help.append(String.format("\tIf you don't provide a where to store the dependencies | lib | is use as default value.%n", ""));
-        help.append(String.format("%n The dependency to add to the project must be a .jar file, otherwise it will not work.%n", ""));
-        help.append(String.format("%n The path of destination or the path where the .jar files are store must be a directory.%n", ""));
+        help.append("\tIf you want to choose where to store the dependencies:\n");
+        help.append(String.format("\t => Use [%s jar-file-path --d copied-to].%n", prefix));
+        help.append("\tIf you don't provide a path to store the dependencies, | lib | is use as default value.\n");
+        help.append("\n\t The dependency to add to the project must be a .jar file, otherwise it will not work.\n");
+        help.append("\t The path of destination or the path where the .jar files will be store must be a directory.\n");
 
-        console.printf(CONSOLE_FORMAT, help);
+        console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
     /**
