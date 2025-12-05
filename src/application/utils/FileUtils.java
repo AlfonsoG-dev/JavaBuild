@@ -62,10 +62,7 @@ public class FileUtils {
     public boolean copyFile(String fileURI, String targetURI) {
         try {
             Path destination = Paths.get(targetURI).resolve(Paths.get(fileURI)).normalize();
-            Path destinationParent = destination.getParent();
-            if(destinationParent != null && Files.createDirectories(destinationParent) != null) {
-                return Files.copy(Paths.get(fileURI), destinationParent, StandardCopyOption.COPY_ATTRIBUTES) != null;
-            }
+            return Files.copy(Paths.get(fileURI), destination, StandardCopyOption.COPY_ATTRIBUTES) != null;
         } catch(IOException e) {
             e.printStackTrace();
         }
