@@ -1,13 +1,16 @@
 package application.builders;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import application.models.CommandModel;
 import application.operations.FileOperation;
 
 public record LibBuilder(String root, FileOperation fileOperation) implements CommandModel  {
     private static final String FILE_EXTENSION = ".jar";
-    private static final String CONSOLE_FORMAT = "%s%n";
 
     @Override
     public FileOperation getFileOperation() {
@@ -37,9 +40,21 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
         String[] libFiles = preparedLibFiles(sourcePath).split(";");
         if(libFiles.length == 0) return "";
 
-        for(String l: libFiles) {
-            //TODO: copy files to extractionFiles
-            System.console().printf(CONSOLE_FORMAT, l);
+        try {
+            for(String l: libFiles) {
+                String parentName = Paths.get(l).getFileName().toString().split(".")[0];
+                Path destination = Paths.get(classPath).resolve(parentName);
+                if(Files.createDirectories(destination) != null) {
+                    System.console().printf("[Info] Creating %n => | %s |%n", destination);
+                }
+                if(!fileOperation.copyFileToTarget(l, destination.toString())) {
+                    System.console().printf("[Error] Couldn't copy %n => | %s |%n", destination);
+                    break;
+                }
+            }
+        } catch(IOException e) {
+            System.console().printf("[Error] %s%n", e.getLocalizedMessage());
+            return "";
         }
 
         // copy files from lib to extractionFiles
