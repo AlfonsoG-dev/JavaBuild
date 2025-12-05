@@ -71,6 +71,16 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
+    public boolean showHelpOnRemove() {
+        if(!isHelpCommand()) return false;
+        StringBuilder help = new StringBuilder();
+
+        help.append("[rm -r path] It's a helper command to remove the class path to build the project from scratch.\n");
+        help.append("If you want to build the project without removing the class path use [--compile] or [--jar] command.\n");
+
+        console.printf(CONSOLE_FORMAT, help);
+        return true;
+    }
     public boolean showHelpOnAddDependecy() {
         if(!isHelpCommand()) return false;
 

@@ -156,6 +156,7 @@ public class Operation {
      * <p> the compile operation should use all the possible paths if class paths doesn't exists.
      */
     public void removeOperation() {
+        if(commandUtils.showHelpOnRemove()) return;
         String removeClassPath = "rm -r " + oClassPath;
         System.console().printf(COMMAND_OUTPUT_FORMAT, removeClassPath);
     }
