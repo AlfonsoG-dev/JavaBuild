@@ -4,6 +4,8 @@ import application.builders.*;
 import application.utils.CommandUtils;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
@@ -156,6 +158,23 @@ public class Operation {
     public void removeOperation() {
         String removeClassPath = "rm -r " + oClassPath;
         System.console().printf(COMMAND_OUTPUT_FORMAT, removeClassPath);
+    }
+    /**
+     * Add a .jar dependency to a destination path.
+     * <p> To give the destination path use --d.
+     * <p> If destination path isn't provided lib is use as default value.
+     */
+    public void addDependency() {
+        String prefix = "--add";
+        String dependency = getPrefixValue(prefix);
+        if(dependency == null) {
+            System.console().printf("[Error] No value for prefix | %s | was given%n", prefix);
+            return;
+        }
+        String target = getPrefixValue("--d");
+        if(target == null) target = "lib";
+        Path destination = Paths.get(target).resolve(dependency);
+        fileOperation.copyFileToTarget(dependency, destination.toString());
     }
     /**
      * Get the command line value of a certain prefix.

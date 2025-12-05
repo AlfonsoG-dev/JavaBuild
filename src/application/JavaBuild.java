@@ -22,6 +22,9 @@ class JavaBuild {
                     op.compileOperation();
                     op.createJarOperation();
                     break;
+                case "--ad":
+                    op.addDependency();
+                    break;
                 case "--h":
                     System.console().printf("%s%n", "Use --h for help");
                     break;
