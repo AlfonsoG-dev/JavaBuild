@@ -43,7 +43,7 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
         command.append(String.format("%s\" ", classPath));
 
         // append compile flags
-        if(compileFlags.isBlank()) compileFlags = "-Werror";
+        if(compileFlags.isBlank() || !compileFlags.startsWith("-")) compileFlags = "-Werror";
         command.append(String.format("%s ", compileFlags));
 
         if(!includeLib.equals("ignore") && !preparedLibFiles(DEFAULT_LIB_PATH).isBlank()) {
@@ -71,7 +71,7 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
         command.append(String.format("%s\" ", classPath));
 
         // append compile flags
-        if(compileFlags.isBlank()) compileFlags = "-Werror";
+        if(compileFlags.isBlank() || !compileFlags.startsWith("-")) compileFlags = "-Werror";
         command.append(String.format("%s ", compileFlags));
 
         // append assets

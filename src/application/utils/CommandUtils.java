@@ -26,6 +26,8 @@ public class CommandUtils {
         help.append(String.format("\tOnly one flag is allowed so: %n", ""));
         help.append(String.format("\t => This [%s -f -Werror -Xlint:all] will only get the first argument -Werror.%n", prefix));
         help.append(String.format("\tThis behavior might change in other version: %n", ""));
+        help.append(String.format("\t The flags will be ignored if the prefix -- or - is not the start of the sequence so: %n", ""));
+        help.append(String.format("\t => This [%s -f Xlint:all] will be replace by the default value -Werror.%n", prefix));
         help.append(String.format("%n\tIf you already compile the project: %n", ""));
         help.append(String.format("\t => This [%s] will only compile the modified files and the files that depend on it.%n", prefix));
 
