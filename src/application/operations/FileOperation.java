@@ -84,6 +84,15 @@ public class FileOperation {
         return "";
     }
     /**
+     * Copy a file into a destination.
+     * @param fileURI - the file to copy.
+     * @param targetURI - the directory where the copy file will be placed.
+     * @return true if the file were copied, false otherwise.
+     */
+    public boolean copyFileToTarget(String fileURI, String targetURI) {
+        return fileUtils.copyFile(fileURI, targetURI);
+    }
+    /**
      * Wrapper method to write lines to a file.
      * @param fileURI - the file to write the lines.
      * @param lines - the lines to write.
