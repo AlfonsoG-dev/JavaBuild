@@ -165,6 +165,7 @@ public class Operation {
      * <p> If destination path isn't provided lib is use as default value.
      */
     public void addDependency() {
+        if(commandUtils.showHelpOnAddDependecy()) return;
         String prefix = "--add";
         String dependency = getPrefixValue(prefix);
         if(dependency == null) {
