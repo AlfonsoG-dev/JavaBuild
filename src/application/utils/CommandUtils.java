@@ -48,7 +48,7 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
-    public boolean showHelpoOnCreateJar() {
+    public boolean showHelpOnCreateJar() {
         String prefix = "--jar";
         if(!isHelpCommand()) return false;
 

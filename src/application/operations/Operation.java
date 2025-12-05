@@ -127,7 +127,7 @@ public class Operation {
      * <p> If there are lib dependencies and you have include in your config, they will be copied and extracted to include them in the build process.
      */
     public void createJarOperation() {
-        if(commandUtils.showHelpoOnCreateJar()) return;
+        if(commandUtils.showHelpOnCreateJar()) return;
         String flags = getPrefixValue("-f");
         String jarCommand = new JarBuilder(root, fileOperation).getCommand(
                 oSourcePath,
