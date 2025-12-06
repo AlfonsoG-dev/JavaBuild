@@ -76,7 +76,7 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
 
         // append assets
         command.append(String.format("-cp '%s", classPath));
-        if(!includeLib.equals("ignore") && preparedLibFiles(DEFAULT_LIB_PATH).isBlank()) {
+        if(!includeLib.equals("ignore") && !preparedLibFiles(DEFAULT_LIB_PATH).isBlank()) {
             command.append(String.format(";%s", preparedLibFiles(DEFAULT_LIB_PATH)));
         }
         command.append("' ");
