@@ -61,16 +61,12 @@ public class FileUtils {
     public boolean copyFile(String fileURI, String targetURI) {
         try {
             Path source = Paths.get(fileURI);
-            if(!Files.isRegularFile(source)) {
-                System.console().printf("[Warning] The path | %s | to copy is not a file type%n", source);
-                return false;
-            }
             Path target = Paths.get(targetURI);
-            if(!Files.isDirectory(target)) {
-                System.console().printf("[Warning] The path | %s | to copy is not a directory type%n", target);
-                return false;
+            Path destination = target.resolve(source.getFileName()).normalize();
+            Path parent = destination.getParent();
+            if(Files.createDirectories(parent) != null ) {
+                System.console().printf("[Info] Creating %n => | %s |%n", parent);
             }
-            Path destination = target.resolve(source).normalize();
             if(Files.copy(Paths.get(fileURI), destination, StandardCopyOption.COPY_ATTRIBUTES) == null) {
                 System.console().printf("[Error] While trying to copy %n => %s into %s%n", source, target);
                 return false;
