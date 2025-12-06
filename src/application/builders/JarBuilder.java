@@ -60,7 +60,7 @@ public record JarBuilder(String root, FileOperation fileOperation)  implements C
             if(libFiles.length == 0) return command.toString();
 
             if(extractFiles.length < libFiles.length) {
-                System.console().printf("[Warning] %s%n", "You have lib dependencies pending extraction.");
+                System.console().printf("[Warning] %s%n", "You have lib dependencies pending extraction.%n");
             }
             for(File f: extractFiles) {
                 command.append(String.format(" -C %s%s . ", f.toPath().normalize().toString(), File.separator));
