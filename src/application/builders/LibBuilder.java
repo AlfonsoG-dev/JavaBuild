@@ -1,8 +1,6 @@
 package application.builders;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -30,7 +28,6 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
      * @return a command for each one of the extract files separated by ";".
      */
     public String getCommand(String sourcePath, String classPath, String flags, String includeLib) {
-        // TODO: test this.
         if(!includeLib.equals("include")) return "";
         StringBuilder command = new StringBuilder();
         if(!flags.isBlank()) {
@@ -40,26 +37,24 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
         String[] libFiles = preparedLibFiles(sourcePath).split(";");
         if(libFiles.length == 0) return "";
 
-        try {
-            for(String l: libFiles) {
-                String parentName = Paths.get(l).getFileName().toString().split(".")[0];
-                Path destination = Paths.get(classPath).resolve(parentName);
-                if(Files.createDirectories(destination) != null) {
-                    System.console().printf("[Info] Creating %n => | %s |%n", destination);
-                }
-                if(!fileOperation.copyFileToTarget(l, destination.toString())) {
-                    System.console().printf("[Error] Couldn't copy %n => | %s |%n", destination);
-                    break;
-                }
-            }
-        } catch(IOException e) {
-            System.console().printf("[Error] %s%n", e.getLocalizedMessage());
-            return "";
-        }
 
         // copy files from lib to extractionFiles
         File[] extractFiles = new File(classPath).listFiles();
         if(extractFiles == null || extractFiles.length == 0) return "";
+
+        if(libFiles.length == extractFiles.length) {
+            System.console().printf("[Info] No Dependencies are pending extraction%n", "");
+            return "";
+        }
+
+        for(String l: libFiles) {
+            String parentName = Paths.get(l).getFileName().toString().replace(".jar", "");
+            Path destination = Paths.get(classPath).resolve(parentName);
+            if(!fileOperation.copyFileToTarget(l, destination.toString())) {
+                System.console().printf("[Error] Couldn't copy %n => | %s |%n", destination);
+                break;
+            }
+        }
 
         // extract .jar files.
         for(File f: extractFiles) {
