@@ -174,7 +174,7 @@ public class Operation {
         }
         String target = getPrefixValue("--d");
         if(target == null) target = "lib";
-        Path destination = Paths.get(target).resolve(dependency);
+        Path destination = Paths.get(target).resolve(Paths.get(dependency).getFileName().toString().replace(".jar", ""));
         fileOperation.copyFileToTarget(dependency, destination.toString());
     }
     /**
