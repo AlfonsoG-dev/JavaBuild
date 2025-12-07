@@ -128,14 +128,6 @@ public class Operation {
      */
     public void createJarOperation() {
         if(commandUtils.showHelpOnCreateJar()) return;
-        String flags = getPrefixValue("-f");
-        String jarCommand = new JarBuilder(root, fileOperation).getCommand(
-                oSourcePath,
-                oClassPath,
-                Optional.ofNullable(flags).orElse(""),
-                oIncludeLib
-        );
-        System.console().printf(COMMAND_OUTPUT_FORMAT, jarCommand);
 
         // append jar extraction
         String libPath = getPrefixValue("--l");
@@ -150,6 +142,15 @@ public class Operation {
         if(!libCommand.isBlank()) {
             System.console().printf(COMMAND_OUTPUT_FORMAT, libCommand);
         }
+        // append jar creation
+        String flags = getPrefixValue("-f");
+        String jarCommand = new JarBuilder(root, fileOperation).getCommand(
+                oSourcePath,
+                oClassPath,
+                Optional.ofNullable(flags).orElse(""),
+                oIncludeLib
+        );
+        System.console().printf(COMMAND_OUTPUT_FORMAT, jarCommand);
     }
     /**
      * Remove the class path of the project in order to compile from scratch.
