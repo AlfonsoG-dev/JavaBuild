@@ -4,17 +4,18 @@ import application.builders.*;
 import application.utils.CommandUtils;
 
 import java.io.File;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.Map;
 import java.util.Optional;
 
 public class Operation {
-    private static final String COMMAND_OUTPUT_FORMAT = "[Command] %s%n";
-
 
     private String[] args;
     private FileOperation fileOperation;
+    private ProcessOperation processOperation;
 
     private CommandUtils commandUtils;
 
@@ -30,11 +31,13 @@ public class Operation {
         this.args = args;
         fileOperation = new FileOperation();
         commandUtils = new CommandUtils(args);
+        processOperation = new ProcessOperation();
     }
-    public Operation(String[] args, FileOperation fileOperation) {
+    public Operation(String[] args, FileOperation fileOperation, ProcessOperation processOperation) {
         this.args = args;
         this.fileOperation = fileOperation;
         commandUtils = new CommandUtils(args);
+        this.processOperation = processOperation;
     }
 
     /**
@@ -87,7 +90,7 @@ public class Operation {
                     oIncludeLib
             );
         }
-        System.console().printf(COMMAND_OUTPUT_FORMAT, command);
+        processOperation.executeCommands(command);
     }
     /**
      * Get command to run the project using a main class entry.
@@ -118,7 +121,7 @@ public class Operation {
                         oIncludeLib
                 );
         }
-        System.console().printf(COMMAND_OUTPUT_FORMAT, command);
+        processOperation.executeCommands(command);
     }
     /**
      * Get the command to create the project .jar file.
@@ -140,7 +143,7 @@ public class Operation {
 
         );
         if(!libCommand.isBlank()) {
-            System.console().printf(COMMAND_OUTPUT_FORMAT, libCommand);
+            processOperation.executeCommands(libCommand);
         }
         // append jar creation
         String flags = getPrefixValue("-f");
@@ -150,7 +153,7 @@ public class Operation {
                 Optional.ofNullable(flags).orElse(""),
                 oIncludeLib
         );
-        System.console().printf(COMMAND_OUTPUT_FORMAT, jarCommand);
+        processOperation.executeCommands(jarCommand);
     }
     /**
      * Remove the class path of the project in order to compile from scratch.
@@ -159,7 +162,7 @@ public class Operation {
     public void removeOperation() {
         if(commandUtils.showHelpOnRemove()) return;
         String removeClassPath = "rm -r " + oClassPath;
-        System.console().printf(COMMAND_OUTPUT_FORMAT, removeClassPath);
+        processOperation.executeCommands(removeClassPath);
     }
     /**
      * Add a .jar dependency to a destination path.
