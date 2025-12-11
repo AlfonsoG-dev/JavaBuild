@@ -39,10 +39,10 @@ public class FileBuilder {
             };
         }
         for(int i=0; i<headers.length; ++i) {
-            String[] l = headers[i].trim().split(":", 2);
-            String k = l[0];
-            String v = l[1];
-            config.append(String.format("%s:%s%n", k, v));
+            String[] l = headers[i].split(":", 2);
+            String k = l[0].trim();
+            String v = l[1].trim();
+            config.append(String.format(CONFIG_FORMAT, k, v));
         }
         System.console().printf("[Info] Writing lines:%n%s%n", config);
         model.getFileOperation().writeLines(fileURI, config.toString());

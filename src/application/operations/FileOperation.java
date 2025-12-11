@@ -134,7 +134,7 @@ public class FileOperation {
         String[][] headers = DEFAULT_CONFIG_VALUES;
         for(int i=0; i<headers.length; ++i) {
             for(int j=i; j<headers.length; ++j) {
-                lines = String.format("%s:%s%n", headers[i][0].trim(), headers[i][j].trim());
+                lines = String.format("%s: %s%n", headers[i][0], headers[i][j]);
             }
         }
         return lines;
