@@ -64,12 +64,12 @@ public class FileOperation {
             .toList();
     }
     /**
-     * Get a collection of file lines.
+     * Get the lines of a file.
      * @param fileURI - the file path to get the lines.
      * @return the lines of the file.
      */
-    public String[] getFileLiles(String fileURI) {
-        return fileUtils.getFileLines(fileURI).split("\n");
+    public String getFileLiles(String fileURI) {
+        return fileUtils.getFileLines(fileURI);
     }
     /**
      * Search in the path for a specific line.
