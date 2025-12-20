@@ -50,7 +50,7 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
         for(String l: libFiles) {
             String parentName = Paths.get(l).getFileName().toString().replace(".jar", "");
             Path destination = Paths.get(classPath).resolve(parentName);
-            if(!fileOperation.copyFileToTarget(l, destination.toString())) {
+            if(destination.toFile().exists() || !fileOperation.copyFileToTarget(l, destination.toString())) {
                 System.console().printf("[Error] Couldn't copy %n => | %s |%n", destination);
                 break;
             }
@@ -58,9 +58,8 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
 
         // extract .jar files.
         for(File f: extractFiles) {
-            // TODO: don't append the files that are already extracted.
-            command.append(String.format("cd %s && ", f.toPath().normalize().toString()));
-            // FIXME: validate that the file and its parent share the same name.
+            String filePath = f.toPath().normalize().toString();
+            command.append(String.format("cd %s && ", filePath));
             // assuming that the .jar file has the same name as its parent folder.
             command.append(String.format("jar -xf %s%s && ", f.getName(), FILE_EXTENSION));
             command.append(String.format("rm -r %s%s%n", f.getName(), FILE_EXTENSION));
