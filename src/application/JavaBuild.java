@@ -3,6 +3,14 @@ package application;
 import application.operations.Operation;
 
 class JavaBuild {
+    static final String[] HEADERS = {
+        "Use [--compile] to compile the project using the configuration file if present.",
+        "Use [--run] to run the project using the main class file.",
+        "Use [--jar] to create the '.jar' file of the project using '.class' files and the main class as entry point.",
+        "Use [--build] to compile from scratch and create the '.jar' file of the project.",
+        "Use [--add] to append a '.jar' dependency to the project.",
+        "Use [--h, ?, h, --help, or help] to show a more detailed description of each command."
+    };
     public static void main(String[] args) {
         Operation op = new Operation(args);
         op.startUpConfig();
@@ -26,11 +34,17 @@ class JavaBuild {
                     op.addDependency();
                     break;
                 case "--h":
-                    System.console().printf("%s%n", "Use --h for help");
+                    System.console().printf("%n");
+                    showCommands();
                     break;
                 default:
                     break;
             }
+        }
+    }
+    public static void showCommands() {
+        for(String h: HEADERS) {
+            System.console().printf("%s%n", h);
         }
     }
 }
