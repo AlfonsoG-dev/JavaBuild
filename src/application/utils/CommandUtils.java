@@ -1,11 +1,17 @@
 package application.utils;
 
 import java.io.Console;
+import java.util.Arrays;
 
 public class CommandUtils {
     private static Console console = System.console();
     private static final String CONSOLE_FORMAT = "%s%n";
 
+    private static final String[] HELP_QUERYS = {
+        "h", "--h", "-h",
+        "--help", "help", "-help",
+        "-?", "--?", "?"
+    };
     private String[] args;
 
     public CommandUtils(String[] args) {
@@ -106,8 +112,7 @@ public class CommandUtils {
     private boolean isHelpCommand() {
         for(int i=0; i<args.length; ++i) {
             String cm = args[i];
-            if(cm.equals("--h") || cm.equals("-h") || cm.equals("?") ||
-                    cm.equals("--help") || cm.equals("-help") || cm.equals("help")) {
+            if(Arrays.asList(HELP_QUERYS).contains(cm)) {
                 return true;
             }
         }
