@@ -15,6 +15,11 @@ public class ProcessOperation {
     private static Console console = System.console();
 
 
+    /**
+     * Executes the given command with attach to it.
+     * <br> If the command is empty or NULL, a Happy-Day message would be printed.
+     * @param command - the command to execute.
+     */
     public void executeCommands(String command) {
         console.printf(CONSOLE_FORMAT, "Info", "Executing commands.");
         try {
@@ -31,6 +36,12 @@ public class ProcessOperation {
             e.printStackTrace();
         }
     }
+    /**
+     * Create a process to attach the commands.
+     * <br> The process executes using *pwsh* on windows and *bash* on linux/mac.
+     * @param command - command to attach to the process.
+     * @return the process with the commands, ready to execute.
+     */
     private ProcessBuilder getProcessForCommandExecution(String command) {
         ProcessBuilder builder = null;
         if(OS_IS_WINDOWS) {
@@ -45,6 +56,10 @@ public class ProcessOperation {
         }
         return builder;
     }
+    /**
+     * Helper function to print the success/failure messages of the executed process.
+     * @param p - the executed process.
+     */
     private void handleProcessStream(Process p) {
         if(p.getInputStream() != null) {
             handleInputStream(p.getInputStream());
@@ -53,6 +68,10 @@ public class ProcessOperation {
             handleInputStream(p.getErrorStream());
         }
     }
+    /**
+     * Helper function to compute the input stream of success/failure of the executed process.
+     * @param input - the stream to compute.
+     */
     private void handleInputStream(InputStream input) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
