@@ -8,6 +8,7 @@ import java.io.File;
 public record JarBuilder(String root, FileOperation fileOperation)  implements CommandModel {
     private static final String DEFAULT_EXTRACT_PATH = "extractionFiles";
     private static final String DEFAULT_LIB_PATH = "lib";
+    private static final String JAR_ASSET_COMMAND = " -C %s%s . ";
 
     @Override
     public FileOperation getFileOperation() {
@@ -49,7 +50,7 @@ public record JarBuilder(String root, FileOperation fileOperation)  implements C
         }
 
         // append class files.
-        command.append(String.format(" -C %s%s . ", classPath, File.separator));
+        command.append(String.format(JAR_ASSET_COMMAND, classPath, File.separator));
 
         // append lib dependencies
         if(includeLib.equals("include")) {
@@ -63,7 +64,59 @@ public record JarBuilder(String root, FileOperation fileOperation)  implements C
                 System.console().printf("[Warning] %s%n", "You have lib dependencies pending extraction.%n");
             }
             for(File f: extractFiles) {
-                command.append(String.format(" -C %s%s . ", f.toPath().normalize().toString(), File.separator));
+                command.append(String.format(JAR_ASSET_COMMAND, f.toPath().normalize().toString(), File.separator));
+            }
+        }
+
+        return command.toString();
+    }
+    /**
+     * Create jar command to build the project jar file given its name.
+     * <br> The jar name will be change if no name is provided.
+     * @param name - the name of the .jar file.
+     * @param sourcePath - the source file path.
+     * @param classPath - the class file path.
+     * @param flags - the flags to add into the jar build command.
+     * @param includeLib - to include/exclude/ignore the .jar dependencies.
+     * @return the command to build the project .jar file.
+     */
+    public String getCommand(String name, String sourcePath, String classPath, String flags, String includeLib) {
+        StringBuilder command = new StringBuilder("jar -c");
+
+        if(!flags.isBlank()) command.append(flags);
+
+        // append .jar file
+        command.append("f");
+
+        // append asset format m for manifesto or e for main class or empty when non are present.
+        String assetFormat = getJarAssetFormat(command, sourcePath);
+        if(name.isBlank()) name = getProjectName();
+
+        // assign .jar file name
+        command.append(String.format("%s.jar ", name));
+        // append assets
+        switch (assetFormat) {
+            case "m " -> command.append("Manifesto.txt");
+            case "e " -> command.append(getMainClass(sourcePath));
+            default -> command.append("");
+        }
+
+        // append class files.
+        command.append(String.format(JAR_ASSET_COMMAND, classPath, File.separator));
+
+        // append lib dependencies
+        if(includeLib.equals("include")) {
+            File[] extractFiles = new File(DEFAULT_EXTRACT_PATH).listFiles();
+            if(extractFiles == null || extractFiles.length == 0) return command.toString();
+
+            String[] libFiles = preparedLibFiles(DEFAULT_LIB_PATH).split(";");
+            if(libFiles.length == 0) return command.toString();
+
+            if(extractFiles.length < libFiles.length) {
+                System.console().printf("[Warning] %s%n", "You have lib dependencies pending extraction.%n");
+            }
+            for(File f: extractFiles) {
+                command.append(String.format(JAR_ASSET_COMMAND, f.toPath().normalize().toString(), File.separator));
             }
         }
 
