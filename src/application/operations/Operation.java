@@ -147,7 +147,13 @@ public class Operation {
         }
         // append jar creation
         String flags = getPrefixValue("-f");
+        String jarName = getPrefixValue("-n");
+        String jarFileName = "";
+        if(jarName != null) {
+            jarFileName = jarName;
+        }
         String jarCommand = new JarBuilder(root, fileOperation).getCommand(
+                jarFileName,
                 oSourcePath,
                 oClassPath,
                 Optional.ofNullable(flags).orElse(""),

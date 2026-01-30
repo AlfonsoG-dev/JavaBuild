@@ -75,6 +75,8 @@ public class CommandUtils {
         help.append(String.format("\t => Use [%s --ex extract-path] to change the extraction path.%n", prefix));
         help.append(String.format("%n\tYou can pass a jar command flags: %n", ""));
         help.append(String.format("\t => Use [%s -f v] to append the v flag in the jar command.%n", prefix));
+        help.append(String.format("%n\tYou can change the jar file name: %n", ""));
+        help.append(String.format("\t => Use [%s -n name] to change the jar file name.%n", prefix));
 
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
