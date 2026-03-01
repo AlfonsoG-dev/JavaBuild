@@ -51,7 +51,7 @@ public record LibBuilder(String root, FileOperation fileOperation) implements Co
             String parentName = Paths.get(l).getFileName().toString().replace(".jar", "");
             Path destination = Paths.get(classPath).resolve(parentName);
             if(destination.toFile().exists() || !fileOperation.copyFileToTarget(l, destination.toString())) {
-                System.console().printf("[Error] Couldn't copy %n => | %s |%n", destination);
+                System.console().printf("[Warning] Couldn't copy %n => | %s |%n", destination);
                 break;
             }
         }
