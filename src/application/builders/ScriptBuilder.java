@@ -13,12 +13,12 @@ public record ScriptBuilder(CommandModel cm) {
         if(OS_NAME_WINDOWS) {
             lines.append("$Source=");
             lines.append("\"");
-            lines.append(cm.prepareSourceDirs(sourceURI));
+            lines.append(cm.prepareSourceDirs(sourceURI).replace("\"", ""));
             lines.append("\"\n");
         } else {
             lines.append("source=");
             lines.append("\"");
-            lines.append(cm.prepareSourceDirs(sourceURI));
+            lines.append(cm.prepareSourceDirs(sourceURI).replace("\"", ""));
             lines.append("\"\n");
         }
     }
