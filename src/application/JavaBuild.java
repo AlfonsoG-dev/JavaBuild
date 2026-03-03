@@ -7,6 +7,7 @@ class JavaBuild {
         "Use [--compile] to compile the project using the configuration file if present.",
         "Use [--run] to run the project using the main class file.",
         "Use [--jar] to create the '.jar' file of the project using '.class' files and the main class as entry point.",
+        "Use [--script] to create the project build script.",
         "Use [--build] to compile from scratch and create the '.jar' file of the project.",
         "Use [--add] to append a '.jar' dependency to the project.",
         "Use [--h, ?, h, --help, or help] to show a more detailed description of each command."
@@ -24,6 +25,9 @@ class JavaBuild {
                     break;
                 case "--jar":
                     op.createJarOperation();
+                    break;
+                case "--script":
+                    op.createScript();
                     break;
                 case "--build":
                     op.removeOperation();
