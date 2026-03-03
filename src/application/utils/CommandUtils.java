@@ -81,6 +81,19 @@ public class CommandUtils {
         console.printf(CONSOLE_FORMAT, help.toString());
         return true;
     }
+    public boolean showHelpOnCreateScript() {
+        String prefix = "--script";
+        if(!isHelpCommand()) return false;
+
+        StringBuilder help = new StringBuilder();
+
+        help.append(String.format("Use [%s] to create the project build script.%n", prefix));
+        help.append(String.format("\t => Use [%s -n name] to change the script file name.%n", prefix));
+        help.append(String.format("%n\tBy default *build* is set as the script name.%n", ""));
+        console.printf(CONSOLE_FORMAT, help.toString());
+        return true;
+
+    }
     public boolean showHelpOnRemove() {
         if(!isHelpCommand()) return false;
         StringBuilder help = new StringBuilder();
