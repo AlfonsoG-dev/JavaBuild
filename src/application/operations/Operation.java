@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public class Operation {
 
+    private static final boolean OS_NAME_WINDOWS = System.getProperty("os.name").equals("Windows 11");
+
     private String[] args;
     private FileOperation fileOperation;
     private ProcessOperation processOperation;
@@ -160,6 +162,19 @@ public class Operation {
                 oIncludeLib
         );
         processOperation.executeCommands(jarCommand);
+    }
+    public void createScript() {
+        if(commandUtils.showHelpOnCreateScript()) return;
+
+        String scriptLines = new ScriptBuilder(compileBuilder).getScript(
+                oSourcePath, oClassPath, oIncludeLib, "lib");
+        if(scriptLines.isBlank()) {
+            System.console().printf("[Warning] No empty lines will be printed%n.", "");
+            return;
+        }
+        String scriptName = getPrefixValue("-n");
+        String extension = OS_NAME_WINDOWS ? ".ps1":".sh";
+        fileOperation.writeLines(Optional.ofNullable(scriptName).orElse("build").concat(extension), scriptLines);
     }
     /**
      * Remove the class path of the project in order to compile from scratch.
