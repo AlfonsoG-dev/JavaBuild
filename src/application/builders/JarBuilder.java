@@ -5,10 +5,18 @@ import application.models.CommandModel;
 
 
 import java.io.File;
-public record JarBuilder(String root, FileOperation fileOperation)  implements CommandModel {
+public class JarBuilder implements CommandModel {
     private static final String DEFAULT_EXTRACT_PATH = "extractionFiles";
     private static final String DEFAULT_LIB_PATH = "lib";
     private static final String JAR_ASSET_COMMAND = " -C %s%s . ";
+
+    private FileOperation fileOperation;
+    private String root;
+
+    public JarBuilder(String root, FileOperation fileOperation) {
+        this.fileOperation = fileOperation;
+        this.root = root;
+    }
 
     @Override
     public FileOperation getFileOperation() {

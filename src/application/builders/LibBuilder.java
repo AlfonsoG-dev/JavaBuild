@@ -7,8 +7,15 @@ import java.nio.file.Paths;
 import application.models.CommandModel;
 import application.operations.FileOperation;
 
-public record LibBuilder(String root, FileOperation fileOperation) implements CommandModel  {
+public class LibBuilder implements CommandModel  {
     private static final String FILE_EXTENSION = ".jar";
+
+    private FileOperation fileOperation;
+    private String root;
+    public LibBuilder(String root, FileOperation fileOperation) {
+        this.fileOperation = fileOperation;
+        this.root = root;
+    }
 
     @Override
     public FileOperation getFileOperation() {

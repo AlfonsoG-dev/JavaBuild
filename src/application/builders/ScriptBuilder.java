@@ -4,7 +4,11 @@ import java.io.File;
 
 import application.models.CommandModel;
 
-public record ScriptBuilder(CommandModel cm) {
+public class ScriptBuilder {
+    private CommandModel commandModel;
+    public ScriptBuilder(CommandModel commandModel) {
+        this.commandModel = commandModel;
+    }
 
     private static final String DEFAULT_LIB_CONFIG = "ignore";
     private static final boolean OS_NAME_WINDOWS = System.getProperty("os.name").equals("Windows 11");
@@ -13,12 +17,12 @@ public record ScriptBuilder(CommandModel cm) {
         if(OS_NAME_WINDOWS) {
             lines.append("$Source=");
             lines.append("\"");
-            lines.append(cm.prepareSourceDirs(sourceURI).replace("\"", ""));
+            lines.append(commandModel.prepareSourceDirs(sourceURI).replace("\"", ""));
             lines.append("\"\n");
         } else {
             lines.append("source=");
             lines.append("\"");
-            lines.append(cm.prepareSourceDirs(sourceURI).replace("\"", ""));
+            lines.append(commandModel.prepareSourceDirs(sourceURI).replace("\"", ""));
             lines.append("\"\n");
         }
     }
@@ -26,12 +30,12 @@ public record ScriptBuilder(CommandModel cm) {
         if(OS_NAME_WINDOWS){
             lines.append("$Libs=");
             lines.append("\"");
-            lines.append(cm.preparedLibFiles(libURI));
+            lines.append(commandModel.preparedLibFiles(libURI));
             lines.append("\"\n");
         } else {
             lines.append("libs=");
             lines.append("\"");
-            lines.append(cm.preparedLibFiles(libURI));
+            lines.append(commandModel.preparedLibFiles(libURI));
             lines.append("\"\n");
         }
     }
@@ -62,7 +66,7 @@ public record ScriptBuilder(CommandModel cm) {
         // TEST: create jar command
         if(OS_NAME_WINDOWS) {
             lines.append("$Jar=\"jar -cfm ");
-            lines.append(cm.getProjectName());
+            lines.append(commandModel.getProjectName());
             lines.append(".jar ");
             lines.append("Manifesto.txt -C ");
             lines.append(targetURI);
@@ -81,7 +85,7 @@ public record ScriptBuilder(CommandModel cm) {
         } else {
             // TEST: linux support
             lines.append("jar -cfm ");
-            lines.append(cm.getProjectName());
+            lines.append(commandModel.getProjectName());
             lines.append(".jar ");
             lines.append("Manifesto.txt -C ");
             lines.append(targetURI);
@@ -110,7 +114,7 @@ public record ScriptBuilder(CommandModel cm) {
                 lines.append("$Libs");
             }
             lines.append("' ");
-            lines.append(cm.getMainClass(sourceURI));
+            lines.append(commandModel.getMainClass(sourceURI));
             lines.append("\"\n");
         } else {
             lines.append("java -cp '");
@@ -120,7 +124,7 @@ public record ScriptBuilder(CommandModel cm) {
                 lines.append("$libs");
             }
             lines.append("' ");
-            lines.append(cm.getMainClass(sourceURI));
+            lines.append(commandModel.getMainClass(sourceURI));
             lines.append("\n");
         }
     }

@@ -3,9 +3,15 @@ package application.builders;
 import application.models.CommandModel;
 import application.operations.FileOperation;
 
-public record RunBuilder(String root, FileOperation fileOperation) implements CommandModel {
+public class RunBuilder implements CommandModel {
 
     public static final String DEFAULT_LIB_PATH = "lib"; 
+    private FileOperation fileOperation;
+    private String root;
+    public RunBuilder(String root, FileOperation fileOperation) {
+        this.fileOperation = fileOperation;
+        this.root = root;
+    }
 
     @Override
     public FileOperation getFileOperation() {

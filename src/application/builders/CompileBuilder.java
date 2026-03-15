@@ -14,9 +14,17 @@ import java.util.stream.Collectors;
 import application.models.CommandModel;
 import application.operations.FileOperation;
 
-public record CompileBuilder(String root, FileOperation fileOperation) implements CommandModel {
+public class CompileBuilder implements CommandModel {
     public static final String DEFAULT_LIB_PATH = "lib";
     public static final String FILE_EXTENSION = ".java";
+
+    private FileOperation fileOperation;
+    private String root;
+
+    public CompileBuilder(String root, FileOperation fileOperation) {
+        this.fileOperation = fileOperation;
+        this.root = root;
+    }
 
     @Override
     public FileOperation getFileOperation() {
@@ -89,7 +97,7 @@ public record CompileBuilder(String root, FileOperation fileOperation) implement
                 .replace(root + File.separator, classPath + File.separator)
                 .replace(FILE_EXTENSION, ".class");
             Path second = Paths.get(comparator);
-            if(fileOperation().isNewerThan(p, second)) {
+            if(fileOperation.isNewerThan(p, second)) {
                 dependent.add(String.format("\"%s\"", p.normalize().toString()));
                 String packageName = "import " + p.normalize().toString()
                     .replace(root + File.separator, "")
